@@ -1,0 +1,29 @@
+# Requires Python 3.11 or 3.12. Verified together: 164 unit tests pass and notebooks 00-02, 04-08 and 05 v2 execute
+# (offline test mode) with these exact versions on Python 3.12. `pip check` reports no conflicts.
+
+# Data generation and testing
+numpy==2.2.6
+pandas==2.2.3
+pyarrow==19.0.1
+PyYAML==6.0.2
+python-dotenv==1.1.0
+pytest==8.3.5
+nbformat==5.10.4
+nbclient==0.10.2
+ipykernel==6.29.5
+
+# Gemini Developer API (Interactions API, structured output) and validation
+google-genai==2.31.0
+pydantic==2.14.1
+httpx==0.28.1
+
+# BigQuery, SQL validation, agent frameworks, tracing
+google-cloud-bigquery==3.46.2
+sqlglot==30.23.0
+langgraph==1.2.15
+google-adk==2.12.0
+# langfuse 5.x needs opentelemetry>=1.45, but google-adk 2.12 pins opentelemetry<=1.42.1 -> newest compatible:
+langfuse==4.15.6
+
+# Offline BigQuery SQL emulator used ONLY by tests / offline test mode (not used for live queries)
+duckdb==1.5.6

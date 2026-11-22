@@ -1,0 +1,577 @@
+[
+  {
+    "defect_id": "D01",
+    "table": "customers",
+    "columns": [
+      "customer_id",
+      "email",
+      "region"
+    ],
+    "defect_type": "duplicate_primary_key",
+    "severity": "critical",
+    "description": "5 customers re-inserted with the same customer_id and email but a different region (e.g. a botched CRM sync).",
+    "detection_rule": "CUS_PK_UNIQUE",
+    "business_impact": "Joining orders to customers doubles these customers' orders, inflating regional sales and AOV; the customer has two conflicting regions.",
+    "expected_outcome": "Fail CUS_PK_UNIQUE with 5 keys; also CUS_EMAIL_UNIQUE (same emails). Analytics joining customers must be flagged as unreliable for these customers.",
+    "affected_ids": [
+      "CUS000192",
+      "CUS000705",
+      "CUS000766",
+      "CUS001219",
+      "CUS001813"
+    ],
+    "expected_findings": {
+      "CUS_PK_UNIQUE": [
+        "CUS000192",
+        "CUS000705",
+        "CUS000766",
+        "CUS001219",
+        "CUS001813"
+      ],
+      "CUS_EMAIL_UNIQUE": [
+        "customer000192@example.com",
+        "customer000705@example.com",
+        "customer000766@example.com",
+        "customer001219@example.com",
+        "customer001813@example.com"
+      ]
+    },
+    "affected_count": 5
+  },
+  {
+    "defect_id": "D02",
+    "table": "customers",
+    "columns": [
+      "region"
+    ],
+    "defect_type": "missing_required_value",
+    "severity": "high",
+    "description": "region set to NULL for 10 customers.",
+    "detection_rule": "CUS_REQUIRED_NOT_NULL",
+    "business_impact": "Their orders fall into a NULL region bucket in regional reports.",
+    "expected_outcome": "Fail CUS_REQUIRED_NOT_NULL with 10 customers. Regional answers must disclose an 'unknown region' share.",
+    "affected_ids": [
+      "CUS000102",
+      "CUS000391",
+      "CUS000626",
+      "CUS000672",
+      "CUS000692",
+      "CUS000837",
+      "CUS000991",
+      "CUS001078",
+      "CUS001135",
+      "CUS001472"
+    ],
+    "expected_findings": {
+      "CUS_REQUIRED_NOT_NULL": [
+        "CUS000102",
+        "CUS000391",
+        "CUS000626",
+        "CUS000672",
+        "CUS000692",
+        "CUS000837",
+        "CUS000991",
+        "CUS001078",
+        "CUS001135",
+        "CUS001472"
+      ]
+    },
+    "affected_count": 10
+  },
+  {
+    "defect_id": "D03",
+    "table": "products",
+    "columns": [
+      "category"
+    ],
+    "defect_type": "invalid_category",
+    "severity": "medium",
+    "description": "3 products get non-canonical categories: a typo, a case variant and a spelling variant.",
+    "detection_rule": "PRD_CATEGORY_ALLOWED",
+    "business_impact": "Category totals split into phantom categories; canonical categories are under-reported.",
+    "expected_outcome": "Fail PRD_CATEGORY_ALLOWED with 3 products.",
+    "affected_ids": [
+      "PRD00106",
+      "PRD00132",
+      "PRD00175"
+    ],
+    "expected_findings": {
+      "PRD_CATEGORY_ALLOWED": [
+        "PRD00106",
+        "PRD00132",
+        "PRD00175"
+      ]
+    },
+    "affected_count": 3
+  },
+  {
+    "defect_id": "D04",
+    "table": "products",
+    "columns": [
+      "sku"
+    ],
+    "defect_type": "duplicate_business_key",
+    "severity": "high",
+    "description": "2 pairs of different products share a SKU.",
+    "detection_rule": "PRD_SKU_UNIQUE",
+    "business_impact": "Inventory/SKU-level reporting merges unrelated products.",
+    "expected_outcome": "Fail PRD_SKU_UNIQUE with 2 SKU values (4 products).",
+    "affected_ids": [
+      "PRD00012",
+      "PRD00101",
+      "PRD00150",
+      "PRD00233"
+    ],
+    "expected_findings": {
+      "PRD_SKU_UNIQUE": [
+        "SKU-APP-00012",
+        "SKU-HOM-00150"
+      ]
+    },
+    "affected_count": 4
+  },
+  {
+    "defect_id": "D05",
+    "table": "orders",
+    "columns": [
+      "customer_id"
+    ],
+    "defect_type": "orphan_foreign_key",
+    "severity": "high",
+    "description": "8 booked orders reference customer_ids that do not exist.",
+    "detection_rule": "ORD_CUSTOMER_FK",
+    "business_impact": "INNER JOIN to customers silently drops these orders' sales; LEFT JOIN yields NULL region.",
+    "expected_outcome": "Fail ORD_CUSTOMER_FK with 8 orders.",
+    "affected_ids": [
+      "ORD0001550",
+      "ORD0003289",
+      "ORD0003772",
+      "ORD0004014",
+      "ORD0004845",
+      "ORD0007336",
+      "ORD0009219",
+      "ORD0012334"
+    ],
+    "expected_findings": {
+      "ORD_CUSTOMER_FK": [
+        "ORD0001550",
+        "ORD0003289",
+        "ORD0003772",
+        "ORD0004014",
+        "ORD0004845",
+        "ORD0007336",
+        "ORD0009219",
+        "ORD0012334"
+      ]
+    },
+    "affected_count": 8
+  },
+  {
+    "defect_id": "D06",
+    "table": "orders",
+    "columns": [
+      "order_status"
+    ],
+    "defect_type": "invalid_status",
+    "severity": "medium",
+    "description": "6 delivered orders carry the non-canonical status 'complete'.",
+    "detection_rule": "ORD_STATUS_ALLOWED",
+    "business_impact": "Filters on booked statuses exclude these orders, understating sales.",
+    "expected_outcome": "Fail ORD_STATUS_ALLOWED with 6 orders. Consistency rules skip records already failing the status domain.",
+    "affected_ids": [
+      "ORD0002530",
+      "ORD0002992",
+      "ORD0003690",
+      "ORD0008736",
+      "ORD0011021",
+      "ORD0013285"
+    ],
+    "expected_findings": {
+      "ORD_STATUS_ALLOWED": [
+        "ORD0002530",
+        "ORD0002992",
+        "ORD0003690",
+        "ORD0008736",
+        "ORD0011021",
+        "ORD0013285"
+      ]
+    },
+    "affected_count": 6
+  },
+  {
+    "defect_id": "D07",
+    "table": "orders",
+    "columns": [
+      "tax_amount",
+      "order_total"
+    ],
+    "defect_type": "incorrect_monetary_total",
+    "severity": "high",
+    "description": "tax_amount zeroed on 10 booked orders while order_total (and the captured payment) still include tax.",
+    "detection_rule": "ORD_TOTAL_CONSISTENT",
+    "business_impact": "Tax reporting understated; order_total no longer equals its components.",
+    "expected_outcome": "Fail ORD_TOTAL_CONSISTENT with 10 orders. Payments still reconcile to order_total, so PAY_CAPTURED_MATCHES_ORDER passes.",
+    "affected_ids": [
+      "ORD0000653",
+      "ORD0000683",
+      "ORD0002003",
+      "ORD0002359",
+      "ORD0002452",
+      "ORD0004663",
+      "ORD0005505",
+      "ORD0008065",
+      "ORD0011744",
+      "ORD0014797"
+    ],
+    "expected_findings": {
+      "ORD_TOTAL_CONSISTENT": [
+        "ORD0000653",
+        "ORD0000683",
+        "ORD0002003",
+        "ORD0002359",
+        "ORD0002452",
+        "ORD0004663",
+        "ORD0005505",
+        "ORD0008065",
+        "ORD0011744",
+        "ORD0014797"
+      ]
+    },
+    "affected_count": 10
+  },
+  {
+    "defect_id": "D08",
+    "table": "order_items",
+    "columns": [
+      "quantity"
+    ],
+    "defect_type": "negative_quantity",
+    "severity": "high",
+    "description": "quantity negated on 5 lines; money columns left unchanged.",
+    "detection_rule": "ITM_QUANTITY_RANGE",
+    "business_impact": "Unit totals understated; quantity * unit_price no longer equals gross_amount.",
+    "expected_outcome": "Fail ITM_QUANTITY_RANGE and ITM_AMOUNTS_CONSISTENT with the same 5 lines.",
+    "affected_ids": [
+      "ITM00003673",
+      "ITM00005733",
+      "ITM00007483",
+      "ITM00015213",
+      "ITM00022701"
+    ],
+    "expected_findings": {
+      "ITM_QUANTITY_RANGE": [
+        "ITM00003673",
+        "ITM00005733",
+        "ITM00007483",
+        "ITM00015213",
+        "ITM00022701"
+      ],
+      "ITM_AMOUNTS_CONSISTENT": [
+        "ITM00003673",
+        "ITM00005733",
+        "ITM00007483",
+        "ITM00015213",
+        "ITM00022701"
+      ]
+    },
+    "affected_count": 5
+  },
+  {
+    "defect_id": "D09",
+    "table": "order_items",
+    "columns": [
+      "order_id"
+    ],
+    "defect_type": "orphan_foreign_key",
+    "severity": "high",
+    "description": "5 order lines inserted that reference non-existent orders.",
+    "detection_rule": "ITM_ORDER_FK",
+    "business_impact": "Item-level sales that do not join to an order header; item-only queries over-report.",
+    "expected_outcome": "Fail ITM_ORDER_FK with 5 lines.",
+    "affected_ids": [
+      "ITM90000000",
+      "ITM90000001",
+      "ITM90000002",
+      "ITM90000003",
+      "ITM90000004"
+    ],
+    "expected_findings": {
+      "ITM_ORDER_FK": [
+        "ITM90000000",
+        "ITM90000001",
+        "ITM90000002",
+        "ITM90000003",
+        "ITM90000004"
+      ]
+    },
+    "affected_count": 5
+  },
+  {
+    "defect_id": "D10",
+    "table": "order_items",
+    "columns": [
+      "*"
+    ],
+    "defect_type": "duplicate_rows",
+    "severity": "critical",
+    "description": "12 order lines loaded twice (exact duplicate rows).",
+    "detection_rule": "ITM_PK_UNIQUE",
+    "business_impact": "Item-based sales metrics are inflated by the duplicated lines' net_amount (fan-out).",
+    "expected_outcome": "Fail ITM_PK_UNIQUE and ITM_LINE_UNIQUE with 12 lines; cascade: ORD_SUBTOTAL_MATCHES_ITEMS fails for their 12 orders.",
+    "affected_ids": [
+      "ITM00002344",
+      "ITM00009253",
+      "ITM00009631",
+      "ITM00014255",
+      "ITM00023525",
+      "ITM00025007",
+      "ITM00025421",
+      "ITM00025629",
+      "ITM00026443",
+      "ITM00026465",
+      "ITM00027446",
+      "ITM00029356"
+    ],
+    "expected_findings": {
+      "ITM_PK_UNIQUE": [
+        "ITM00002344",
+        "ITM00009253",
+        "ITM00009631",
+        "ITM00014255",
+        "ITM00023525",
+        "ITM00025007",
+        "ITM00025421",
+        "ITM00025629",
+        "ITM00026443",
+        "ITM00026465",
+        "ITM00027446",
+        "ITM00029356"
+      ],
+      "ITM_LINE_UNIQUE": [
+        "ITM00002344",
+        "ITM00009253",
+        "ITM00009631",
+        "ITM00014255",
+        "ITM00023525",
+        "ITM00025007",
+        "ITM00025421",
+        "ITM00025629",
+        "ITM00026443",
+        "ITM00026465",
+        "ITM00027446",
+        "ITM00029356"
+      ],
+      "ORD_SUBTOTAL_MATCHES_ITEMS": [
+        "ORD0001069",
+        "ORD0004234",
+        "ORD0004408",
+        "ORD0006523",
+        "ORD0010742",
+        "ORD0011423",
+        "ORD0011613",
+        "ORD0011711",
+        "ORD0012067",
+        "ORD0012078",
+        "ORD0012536",
+        "ORD0013402"
+      ]
+    },
+    "affected_count": 12
+  },
+  {
+    "defect_id": "D11",
+    "table": "payments",
+    "columns": [
+      "provider_transaction_id"
+    ],
+    "defect_type": "duplicate_transaction",
+    "severity": "critical",
+    "description": "15 captured payments recorded twice under new payment_ids with the same provider_transaction_id.",
+    "detection_rule": "PAY_TXN_UNIQUE",
+    "business_impact": "Total payments received is overstated by the duplicated amounts; payments no longer reconcile to orders.",
+    "expected_outcome": "Fail PAY_TXN_UNIQUE with 15 transaction ids; cascade: PAY_CAPTURED_MATCHES_ORDER fails for the 15 orders.",
+    "affected_ids": [
+      "PAY9000000",
+      "PAY9000001",
+      "PAY9000002",
+      "PAY9000003",
+      "PAY9000004",
+      "PAY9000005",
+      "PAY9000006",
+      "PAY9000007",
+      "PAY9000008",
+      "PAY9000009",
+      "PAY9000010",
+      "PAY9000011",
+      "PAY9000012",
+      "PAY9000013",
+      "PAY9000014"
+    ],
+    "expected_findings": {
+      "PAY_TXN_UNIQUE": [
+        "txn_162944dbbf4b7215",
+        "txn_1e30cd6f9b4e17d8",
+        "txn_1ed1a475dc12fe25",
+        "txn_1f11553854219935",
+        "txn_2949146d05b74e7b",
+        "txn_42756359eaf2c99e",
+        "txn_437dd4dad0225a23",
+        "txn_4a2a106325415f76",
+        "txn_502be04844a75578",
+        "txn_51414d7810a49cee",
+        "txn_52d7c4c1b79966bb",
+        "txn_5afccabe7c43433f",
+        "txn_68289750ea3196c5",
+        "txn_698074f8b235dd4c",
+        "txn_7180b1fade4ef7e9"
+      ],
+      "PAY_CAPTURED_MATCHES_ORDER": [
+        "ORD0000255",
+        "ORD0000727",
+        "ORD0000850",
+        "ORD0000944",
+        "ORD0003413",
+        "ORD0005281",
+        "ORD0005974",
+        "ORD0008189",
+        "ORD0008997",
+        "ORD0011387",
+        "ORD0011388",
+        "ORD0012558",
+        "ORD0012876",
+        "ORD0013268",
+        "ORD0014782"
+      ]
+    },
+    "affected_count": 15
+  },
+  {
+    "defect_id": "D12",
+    "table": "payments",
+    "columns": [
+      "payment_timestamp"
+    ],
+    "defect_type": "invalid_timestamp_sequence",
+    "severity": "medium",
+    "description": "5 captured payments timestamped 1-48 hours before their order was placed.",
+    "detection_rule": "PAY_AFTER_ORDER",
+    "business_impact": "Payment-date reports shift cash into earlier periods; indicates clock or ETL timezone problems.",
+    "expected_outcome": "Fail PAY_AFTER_ORDER with 5 payments.",
+    "affected_ids": [
+      "PAY0000404",
+      "PAY0002340",
+      "PAY0002623",
+      "PAY0006684",
+      "PAY0012214"
+    ],
+    "expected_findings": {
+      "PAY_AFTER_ORDER": [
+        "PAY0000404",
+        "PAY0002340",
+        "PAY0002623",
+        "PAY0006684",
+        "PAY0012214"
+      ]
+    },
+    "affected_count": 5
+  },
+  {
+    "defect_id": "D13",
+    "table": "refunds",
+    "columns": [
+      "refund_amount"
+    ],
+    "defect_type": "refund_exceeds_refundable",
+    "severity": "critical",
+    "description": "6 completed item refunds set to 3x the line's net amount.",
+    "detection_rule": "REF_WITHIN_REFUNDABLE",
+    "business_impact": "Net sales understated; potential financial loss or fraud signal.",
+    "expected_outcome": "Fail REF_WITHIN_REFUNDABLE with 6 refunds. Legitimate partial refunds must still pass.",
+    "affected_ids": [
+      "REF000186",
+      "REF000199",
+      "REF000208",
+      "REF000228",
+      "REF000587",
+      "REF001091"
+    ],
+    "expected_findings": {
+      "REF_WITHIN_REFUNDABLE": [
+        "REF000186",
+        "REF000199",
+        "REF000208",
+        "REF000228",
+        "REF000587",
+        "REF001091"
+      ]
+    },
+    "affected_count": 6
+  },
+  {
+    "defect_id": "D14",
+    "table": "shipments",
+    "columns": [
+      "delivered_timestamp"
+    ],
+    "defect_type": "invalid_timestamp_sequence",
+    "severity": "high",
+    "description": "7 delivered shipments have delivered_timestamp earlier than shipped_timestamp.",
+    "detection_rule": "SHP_DELIVERY_AFTER_SHIP",
+    "business_impact": "Delivery-time metrics become negative/flattering; on-time rate overstated.",
+    "expected_outcome": "Fail SHP_DELIVERY_AFTER_SHIP with 7 shipments.",
+    "affected_ids": [
+      "SHP0003754",
+      "SHP0005112",
+      "SHP0005278",
+      "SHP0006270",
+      "SHP0009584",
+      "SHP0010988",
+      "SHP0010998"
+    ],
+    "expected_findings": {
+      "SHP_DELIVERY_AFTER_SHIP": [
+        "SHP0003754",
+        "SHP0005112",
+        "SHP0005278",
+        "SHP0006270",
+        "SHP0009584",
+        "SHP0010988",
+        "SHP0010998"
+      ]
+    },
+    "affected_count": 7
+  },
+  {
+    "defect_id": "D15",
+    "table": "shipments",
+    "columns": [
+      "shipment_status",
+      "delivered_timestamp"
+    ],
+    "defect_type": "inconsistent_state",
+    "severity": "high",
+    "description": "6 shipments marked delivered with no delivered_timestamp.",
+    "detection_rule": "SHP_DELIVERED_TS_CONSISTENT",
+    "business_impact": "These shipments silently drop out of on-time/late calculations.",
+    "expected_outcome": "Fail SHP_DELIVERED_TS_CONSISTENT with 6 shipments.",
+    "affected_ids": [
+      "SHP0001329",
+      "SHP0002271",
+      "SHP0002470",
+      "SHP0003201",
+      "SHP0005228",
+      "SHP0007911"
+    ],
+    "expected_findings": {
+      "SHP_DELIVERED_TS_CONSISTENT": [
+        "SHP0001329",
+        "SHP0002271",
+        "SHP0002470",
+        "SHP0003201",
+        "SHP0005228",
+        "SHP0007911"
+      ]
+    },
+    "affected_count": 6
+  }
+]

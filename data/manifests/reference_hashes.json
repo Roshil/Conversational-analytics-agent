@@ -1,0 +1,25 @@
+{
+  "note": "SHA-256 of CSV files produced in the build environment with requirements.txt pins. Used by scripts/verify_reproducibility.py.",
+  "environment": {
+    "python": "3.12.3",
+    "numpy": "2.2.6",
+    "pandas": "2.2.3",
+    "pyarrow": "19.0.1"
+  },
+  "csv_sha256": {
+    "data/generated/clean/csv/customers.csv": "9ff768d9fc6bcc9a30bf274b336b62ea16d5d9bd303054325f5884d39d8fa270",
+    "data/generated/clean/csv/products.csv": "e68dce0e01afb6e7b5f22c564e40cc66420953a172a7b3d015002b232d54cd3a",
+    "data/generated/clean/csv/orders.csv": "a030616cf4c0889e63054ec901a86c693555f8e261ecef782e7a9cc0e93b89be",
+    "data/generated/clean/csv/order_items.csv": "10b98665331c7e73659be36bc1d749f2dfb7164f5689601d646a54b628e49525",
+    "data/generated/clean/csv/payments.csv": "601653eae717076e849acbe28a01de56a7c56402aa576333d25182f761cffb7b",
+    "data/generated/clean/csv/shipments.csv": "4ba0505af1eecb1d27b9477419dae636e3bf058cce66553c43f6404a7d011d37",
+    "data/generated/clean/csv/refunds.csv": "26262fec3bd1d8d8f7e0be6a23338c0a8f021a1dadf6d85d8c3ebaf97d01bbe4",
+    "data/generated/corrupted/csv/customers.csv": "f5867abe730631194080ea555a8726a151bd14ab11846e1a76b6a24225237481",
+    "data/generated/corrupted/csv/products.csv": "4dd5569d46d5c352e01a2b7620c042d764ed72242723799f0253626601d45ddf",
+    "data/generated/corrupted/csv/orders.csv": "9e68f7d899d507444b5f5abc25b39ca9621d00e9399c0b439d285b21a34ff603",
+    "data/generated/corrupted/csv/order_items.csv": "c578e1b742f20199c7df53242b5f9599c7d23b4e0b498ba11fa02d1866c81a06",
+    "data/generated/corrupted/csv/payments.csv": "2c83df27e246ea52411ece2b02815d8d367147d93bada17491ecf7a2abbca358",
+    "data/generated/corrupted/csv/shipments.csv": "e375c1f0ebffa67e56cef901591685e367f8c39fc669a0216de70ac89bee0141",
+    "data/generated/corrupted/csv/refunds.csv": "207fec4b15e942846dc6e2147130a4abb9c94ba5ae0ff94f8819c2fa1896078b"
+  }
+}

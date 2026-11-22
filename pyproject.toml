@@ -1,0 +1,19 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "analytics-agent"
+version = "0.4.0"
+description = "BigQuery-powered conversational analytics agent (Gemini + Langfuse) - Stage 1-2: data model and synthetic data"
+requires-python = ">=3.11"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+markers = [
+    "integration: requires live Google Cloud / Gemini credentials (not run by default)",
+]
+addopts = "-m 'not integration'"

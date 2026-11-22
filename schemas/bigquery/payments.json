@@ -1,0 +1,50 @@
+[
+  {
+    "name": "payment_id",
+    "type": "STRING",
+    "mode": "REQUIRED",
+    "description": "Surrogate payment attempt identifier, format PAY0000001."
+  },
+  {
+    "name": "order_id",
+    "type": "STRING",
+    "mode": "REQUIRED",
+    "description": "FK to orders.order_id."
+  },
+  {
+    "name": "provider_transaction_id",
+    "type": "STRING",
+    "mode": "REQUIRED",
+    "description": "Payment provider's transaction reference. Business key: must be unique; duplicates indicate double-recorded payments."
+  },
+  {
+    "name": "payment_timestamp",
+    "type": "TIMESTAMP",
+    "mode": "REQUIRED",
+    "description": "When the attempt was processed (UTC); must be >= order_timestamp."
+  },
+  {
+    "name": "payment_method",
+    "type": "STRING",
+    "mode": "REQUIRED",
+    "description": "Instrument used."
+  },
+  {
+    "name": "payment_status",
+    "type": "STRING",
+    "mode": "REQUIRED",
+    "description": "captured = money taken; failed = attempt declined; pending = awaiting confirmation."
+  },
+  {
+    "name": "amount",
+    "type": "NUMERIC",
+    "mode": "REQUIRED",
+    "description": "Attempted amount in USD (> 0). For captured payments equals orders.order_total."
+  },
+  {
+    "name": "failure_reason",
+    "type": "STRING",
+    "mode": "NULLABLE",
+    "description": "Set if and only if payment_status = 'failed'."
+  }
+]

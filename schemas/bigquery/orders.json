@@ -1,0 +1,80 @@
+[
+  {
+    "name": "order_id",
+    "type": "STRING",
+    "mode": "REQUIRED",
+    "description": "Surrogate order identifier, format ORD0000001."
+  },
+  {
+    "name": "customer_id",
+    "type": "STRING",
+    "mode": "REQUIRED",
+    "description": "FK to customers.customer_id."
+  },
+  {
+    "name": "order_timestamp",
+    "type": "TIMESTAMP",
+    "mode": "REQUIRED",
+    "description": "When the order was placed (UTC)."
+  },
+  {
+    "name": "order_date",
+    "type": "DATE",
+    "mode": "REQUIRED",
+    "description": "DATE(order_timestamp) in UTC. Partition column and the date used to attribute sales to a period."
+  },
+  {
+    "name": "order_status",
+    "type": "STRING",
+    "mode": "REQUIRED",
+    "description": "Lifecycle status as of the data snapshot. Refund state is NOT stored here; see refunds."
+  },
+  {
+    "name": "sales_channel",
+    "type": "STRING",
+    "mode": "REQUIRED",
+    "description": "Channel the order was placed through."
+  },
+  {
+    "name": "currency_code",
+    "type": "STRING",
+    "mode": "REQUIRED",
+    "description": "Currency of all money columns."
+  },
+  {
+    "name": "items_subtotal",
+    "type": "NUMERIC",
+    "mode": "REQUIRED",
+    "description": "SUM(order_items.gross_amount) for the order (before discounts)."
+  },
+  {
+    "name": "discount_amount",
+    "type": "NUMERIC",
+    "mode": "REQUIRED",
+    "description": "SUM(order_items.discount_amount) for the order."
+  },
+  {
+    "name": "shipping_amount",
+    "type": "NUMERIC",
+    "mode": "REQUIRED",
+    "description": "Shipping charged to the customer (0.00 when merchandise net >= 75.00, else 6.99)."
+  },
+  {
+    "name": "tax_amount",
+    "type": "NUMERIC",
+    "mode": "REQUIRED",
+    "description": "Sales tax = ROUND((items_subtotal - discount_amount) * regional rate, 2)."
+  },
+  {
+    "name": "order_total",
+    "type": "NUMERIC",
+    "mode": "REQUIRED",
+    "description": "items_subtotal - discount_amount + shipping_amount + tax_amount. Amount the customer is asked to pay."
+  },
+  {
+    "name": "cancelled_timestamp",
+    "type": "TIMESTAMP",
+    "mode": "NULLABLE",
+    "description": "Set if and only if order_status = 'cancelled'."
+  }
+]

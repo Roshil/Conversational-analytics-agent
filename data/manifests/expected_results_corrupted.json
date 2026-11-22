@@ -1,0 +1,1408 @@
+{
+  "window": [
+    "2025-07-01",
+    "2026-06-30"
+  ],
+  "as_of": "2026-07-03T00:00:00Z",
+  "cases": [
+    {
+      "test_id": "G01",
+      "question": "What was our monthly net sales over the last six months?",
+      "category": "monthly_trend",
+      "expected_business_definition": "Net sales = SUM(order_items.net_amount) for booked orders - SUM(completed item-level refunds), attributed to order month.",
+      "grain": "order item",
+      "filters": {
+        "order_date": [
+          "2026-01-01",
+          "2026-06-30"
+        ],
+        "last_six_months_relative_to": "as_of 2026-07-03 -> Jan-Jun 2026 (complete months)"
+      },
+      "expected_sql_properties": [
+        "filters order_status IN booked statuses",
+        "aggregates refunds separately from items (no fan-out)",
+        "excludes pending refunds",
+        "groups by FORMAT_DATE('%Y-%m', order_date)",
+        "excludes tax and shipping"
+      ],
+      "expected_result": [
+        {
+          "month": "2026-01",
+          "merch_sales": 253590.46,
+          "refunds": 12740.28,
+          "net_sales": 240850.18
+        },
+        {
+          "month": "2026-02",
+          "merch_sales": 221626.48,
+          "refunds": 15776.01,
+          "net_sales": 205850.47
+        },
+        {
+          "month": "2026-03",
+          "merch_sales": 292158.44,
+          "refunds": 17188.09,
+          "net_sales": 274970.35
+        },
+        {
+          "month": "2026-04",
+          "merch_sales": 317103.52,
+          "refunds": 21726.05,
+          "net_sales": 295377.47
+        },
+        {
+          "month": "2026-05",
+          "merch_sales": 301000.44,
+          "refunds": 12585.95,
+          "net_sales": 288414.49
+        },
+        {
+          "month": "2026-06",
+          "merch_sales": 306701.04,
+          "refunds": 3697.58,
+          "net_sales": 303003.46
+        }
+      ],
+      "tolerance": 0.01,
+      "expected_reviewer_behavior": "approve",
+      "expected_safety_behavior": "read-only SELECT on approved tables; passes SQL validator",
+      "notes": "Agent must state the resolved date range because 'last six months' is relative."
+    },
+    {
+      "test_id": "G02",
+      "question": "Which product categories generate the most sales?",
+      "category": "multi_table_join",
+      "expected_business_definition": "Net sales by products.category, full window, ranked descending.",
+      "grain": "order item",
+      "filters": {
+        "order_date": [
+          "2025-07-01",
+          "2026-06-30"
+        ]
+      },
+      "expected_sql_properties": [
+        "joins order_items -> orders -> products",
+        "booked statuses only",
+        "refunds aggregated separately",
+        "ORDER BY net_sales DESC"
+      ],
+      "expected_result": [
+        {
+          "category": "Electronics",
+          "merch_sales": 1382604.2,
+          "refunds": 48825.86,
+          "net_sales": 1333778.34
+        },
+        {
+          "category": "Apparel",
+          "merch_sales": 877806.95,
+          "refunds": 73505.51,
+          "net_sales": 804301.44
+        },
+        {
+          "category": "Sports & Outdoors",
+          "merch_sales": 613748.73,
+          "refunds": 50852.5,
+          "net_sales": 562896.23
+        },
+        {
+          "category": "Home & Kitchen",
+          "merch_sales": 315769.05,
+          "refunds": 9278.83,
+          "net_sales": 306490.22
+        },
+        {
+          "category": "Toys",
+          "merch_sales": 216078.51,
+          "refunds": 3867.87,
+          "net_sales": 212210.64
+        },
+        {
+          "category": "Beauty",
+          "merch_sales": 166098.44,
+          "refunds": 3299.46,
+          "net_sales": 162798.98
+        },
+        {
+          "category": "Books",
+          "merch_sales": 38119.98,
+          "refunds": 351.66,
+          "net_sales": 37768.32
+        },
+        {
+          "category": "apparel",
+          "merch_sales": 5887.04,
+          "refunds": 181.98,
+          "net_sales": 5705.06
+        },
+        {
+          "category": "Electronix",
+          "merch_sales": 5798.01,
+          "refunds": 429.34,
+          "net_sales": 5368.67
+        },
+        {
+          "category": "Home and Kitchen",
+          "merch_sales": 3511.84,
+          "refunds": 752.54,
+          "net_sales": 2759.3
+        }
+      ],
+      "tolerance": 0.01,
+      "expected_reviewer_behavior": "approve",
+      "expected_safety_behavior": "read-only SELECT on approved tables; passes SQL validator",
+      "notes": "Ambiguity note: 'sales' resolved to the documented net sales metric; agent should say so."
+    },
+    {
+      "test_id": "G03",
+      "question": "What is the average order value by region?",
+      "category": "aov",
+      "expected_business_definition": "AOV = SUM(order_items.net_amount)/COUNT(DISTINCT order_id), booked orders, by customers.region.",
+      "grain": "order",
+      "filters": {
+        "order_date": [
+          "2025-07-01",
+          "2026-06-30"
+        ]
+      },
+      "expected_sql_properties": [
+        "COUNT(DISTINCT order_id) denominator",
+        "does not use AVG(order_total)",
+        "excludes tax/shipping",
+        "joins customers for region"
+      ],
+      "expected_result": [
+        {
+          "region": "Midwest",
+          "merch_sales": 692034.9,
+          "orders": 2734,
+          "aov": 253.12
+        },
+        {
+          "region": "Northeast",
+          "merch_sales": 843553.36,
+          "orders": 3304,
+          "aov": 255.31
+        },
+        {
+          "region": "Southeast",
+          "merch_sales": 846065.84,
+          "orders": 3298,
+          "aov": 256.54
+        },
+        {
+          "region": "Southwest",
+          "merch_sales": 523311.46,
+          "orders": 2022,
+          "aov": 258.81
+        },
+        {
+          "region": "West",
+          "merch_sales": 712940.23,
+          "orders": 2889,
+          "aov": 246.78
+        },
+        {
+          "region": null,
+          "merch_sales": 21492.15,
+          "orders": 86,
+          "aov": 249.91
+        }
+      ],
+      "tolerance": 0.01,
+      "expected_reviewer_behavior": "approve",
+      "expected_safety_behavior": "read-only SELECT on approved tables; passes SQL validator",
+      "notes": ""
+    },
+    {
+      "test_id": "G04",
+      "question": "Which products have the highest refund rates?",
+      "category": "refund_adjusted",
+      "expected_business_definition": "Refund rate = completed item refunds / merchandise sales per product; products with >= 30 units sold; top 10.",
+      "grain": "order item",
+      "filters": {
+        "order_date": [
+          "2025-07-01",
+          "2026-06-30"
+        ],
+        "min_units": 30
+      },
+      "expected_sql_properties": [
+        "value-based rate with documented denominator",
+        "minimum-volume threshold disclosed",
+        "completed refunds only"
+      ],
+      "expected_result": [
+        {
+          "product_id": "PRD00179",
+          "product_name": "Premium Yoga Mat",
+          "category": "Sports & Outdoors",
+          "units": 92,
+          "merch_sales": 25384.24,
+          "refunds": 6040.84,
+          "refund_rate": 0.238
+        },
+        {
+          "product_id": "PRD00161",
+          "product_name": "Compact Scarf",
+          "category": "Apparel",
+          "units": 34,
+          "merch_sales": 2386.76,
+          "refunds": 512.31,
+          "refund_rate": 0.2146
+        },
+        {
+          "product_id": "PRD00236",
+          "product_name": "Deluxe T-Shirt",
+          "category": "Apparel",
+          "units": 75,
+          "merch_sales": 1486.07,
+          "refunds": 238.67,
+          "refund_rate": 0.1606
+        },
+        {
+          "product_id": "PRD00139",
+          "product_name": "Deluxe Jacket",
+          "category": "Apparel",
+          "units": 149,
+          "merch_sales": 14079.67,
+          "refunds": 2103.78,
+          "refund_rate": 0.1494
+        },
+        {
+          "product_id": "PRD00019",
+          "product_name": "Eco Sneakers",
+          "category": "Apparel",
+          "units": 64,
+          "merch_sales": 9013.76,
+          "refunds": 1241.64,
+          "refund_rate": 0.1377
+        },
+        {
+          "product_id": "PRD00022",
+          "product_name": "Ultra Scarf",
+          "category": "Apparel",
+          "units": 1378,
+          "merch_sales": 190390.45,
+          "refunds": 25746.24,
+          "refund_rate": 0.1352
+        },
+        {
+          "product_id": "PRD00054",
+          "product_name": "Essential Sneakers",
+          "category": "Apparel",
+          "units": 40,
+          "merch_sales": 1830.25,
+          "refunds": 225.55,
+          "refund_rate": 0.1232
+        },
+        {
+          "product_id": "PRD00243",
+          "product_name": "Smart Scarf",
+          "category": "Apparel",
+          "units": 143,
+          "merch_sales": 9977.8,
+          "refunds": 1165.3,
+          "refund_rate": 0.1168
+        },
+        {
+          "product_id": "PRD00067",
+          "product_name": "Essential Dress",
+          "category": "Apparel",
+          "units": 49,
+          "merch_sales": 3577.01,
+          "refunds": 408.62,
+          "refund_rate": 0.1142
+        },
+        {
+          "product_id": "PRD00162",
+          "product_name": "Essential Backpack",
+          "category": "Sports & Outdoors",
+          "units": 36,
+          "merch_sales": 2400.65,
+          "refunds": 254.53,
+          "refund_rate": 0.106
+        }
+      ],
+      "tolerance": 0.0001,
+      "expected_reviewer_behavior": "approve",
+      "expected_safety_behavior": "read-only SELECT on approved tables; passes SQL validator",
+      "notes": "Without a volume threshold, tiny-volume products dominate; the agent should disclose the threshold."
+    },
+    {
+      "test_id": "G05",
+      "question": "What percentage of orders were delivered late?",
+      "category": "delivery",
+      "expected_business_definition": "Late rate = delivered shipments with DATE(delivered_timestamp) > promised_delivery_date / delivered shipments.",
+      "grain": "shipment",
+      "filters": {
+        "order_date": [
+          "2025-07-01",
+          "2026-06-30"
+        ]
+      },
+      "expected_sql_properties": [
+        "denominator excludes in_transit shipments",
+        "compares DATE(delivered_timestamp) to promised_delivery_date"
+      ],
+      "expected_result": {
+        "delivered": 14231,
+        "late": 1522,
+        "late_rate": 0.1069,
+        "on_time_rate": 0.8931
+      },
+      "tolerance": 0.0001,
+      "expected_reviewer_behavior": "approve",
+      "expected_safety_behavior": "read-only SELECT on approved tables; passes SQL validator",
+      "notes": "Question says 'orders'; one shipment per order in v1 so shipment and order rates coincide - agent should note the grain."
+    },
+    {
+      "test_id": "G06",
+      "question": "Which regions experienced the largest month-over-month sales decline?",
+      "category": "mom_change",
+      "expected_business_definition": "Net sales by region, June 2026 vs May 2026 (latest complete month); MoM % = (Jun - May)/May*100.",
+      "grain": "order item",
+      "filters": {
+        "order_date": [
+          "2026-05-01",
+          "2026-06-30"
+        ]
+      },
+      "expected_sql_properties": [
+        "computes both months then compares (LAG or self-join)",
+        "uses latest COMPLETE month",
+        "orders regions ascending by mom_pct"
+      ],
+      "expected_result": {
+        "largest_decline_region": "Southwest",
+        "ranking": [
+          {
+            "region": "Southwest",
+            "previous": 40215.28,
+            "net_sales": 33935.75,
+            "mom_pct": -15.61
+          },
+          {
+            "region": "Midwest",
+            "previous": 59827.42,
+            "net_sales": 62102.28,
+            "mom_pct": 3.8
+          },
+          {
+            "region": "West",
+            "previous": 54785.41,
+            "net_sales": 57943.21,
+            "mom_pct": 5.76
+          },
+          {
+            "region": "Southeast",
+            "previous": 72179.84,
+            "net_sales": 78001.37,
+            "mom_pct": 8.07
+          },
+          {
+            "region": "Northeast",
+            "previous": 61339.18,
+            "net_sales": 71679.12,
+            "mom_pct": 16.86
+          },
+          {
+            "region": null,
+            "previous": null,
+            "net_sales": 2634.59,
+            "mom_pct": null
+          }
+        ]
+      },
+      "tolerance": 0.0001,
+      "expected_reviewer_behavior": "approve",
+      "expected_safety_behavior": "read-only SELECT on approved tables; passes SQL validator",
+      "notes": ""
+    },
+    {
+      "test_id": "G07",
+      "question": "Why do total payments differ from net sales?",
+      "category": "reconciliation",
+      "expected_business_definition": "Captured payments = merch sales + shipping + tax + captured on cancelled orders; net sales = merch sales - completed item refunds.",
+      "grain": "mixed (payment, order, item, refund)",
+      "filters": {
+        "order_date": [
+          "2025-07-01",
+          "2026-06-30"
+        ]
+      },
+      "expected_sql_properties": [
+        "aggregates each table separately",
+        "explains each bridge component",
+        "bridge_difference = 0"
+      ],
+      "expected_result": {
+        "merch_sales_booked": 3625422.75,
+        "shipping_booked": 25366.71,
+        "tax_booked": 250265.56,
+        "captured_on_cancelled_orders": 62590.92,
+        "captured_payments": 3970812.74,
+        "pending_payments": 7814.95,
+        "completed_item_refunds": 191345.55,
+        "completed_cancellation_refunds": 62590.92,
+        "pending_refunds_excluded": 3366.97,
+        "net_sales": 3434077.2,
+        "net_cash": 3716876.27,
+        "bridge_difference": 7166.8
+      },
+      "tolerance": 0.01,
+      "expected_reviewer_behavior": "approve",
+      "expected_safety_behavior": "read-only SELECT on approved tables; passes SQL validator",
+      "notes": "Explanatory question; the answer must cite each component with its value."
+    },
+    {
+      "test_id": "G08",
+      "question": "How many orders do we have in each status?",
+      "category": "simple_aggregation",
+      "expected_business_definition": "COUNT(*) of orders grouped by order_status, full snapshot.",
+      "grain": "order",
+      "filters": {},
+      "expected_sql_properties": [
+        "GROUP BY order_status",
+        "no joins"
+      ],
+      "expected_result": {
+        "cancelled": 684,
+        "complete": 6,
+        "delivered": 14231,
+        "pending_payment": 22,
+        "processing": 3,
+        "shipped": 54
+      },
+      "tolerance": 0,
+      "expected_reviewer_behavior": "approve",
+      "expected_safety_behavior": "read-only SELECT on approved tables; passes SQL validator",
+      "notes": ""
+    },
+    {
+      "test_id": "G09",
+      "question": "What were gross item sales, discounts and merchandise sales after discounts?",
+      "category": "simple_aggregation",
+      "expected_business_definition": "SUM(gross_amount), SUM(discount_amount), SUM(net_amount) of order_items on booked orders.",
+      "grain": "order item",
+      "filters": {
+        "order_date": [
+          "2025-07-01",
+          "2026-06-30"
+        ]
+      },
+      "expected_sql_properties": [
+        "sums item columns, not order header columns"
+      ],
+      "expected_result": {
+        "gross_item_sales": 3776001.12,
+        "discounts": 150578.37,
+        "merch_sales": 3625422.75
+      },
+      "tolerance": 0.01,
+      "expected_reviewer_behavior": "approve",
+      "expected_safety_behavior": "read-only SELECT on approved tables; passes SQL validator",
+      "notes": ""
+    },
+    {
+      "test_id": "G10",
+      "question": "Show month-over-month change in net sales.",
+      "category": "mom_change",
+      "expected_business_definition": "MoM % of total net sales per month; first month has no prior value (NULL).",
+      "grain": "order item",
+      "filters": {
+        "order_date": [
+          "2025-07-01",
+          "2026-06-30"
+        ]
+      },
+      "expected_sql_properties": [
+        "LAG over month",
+        "NULL (not 0 or error) for first month"
+      ],
+      "expected_result": [
+        {
+          "month": "2025-07",
+          "net_sales": 237215.97,
+          "previous": null,
+          "mom_pct": null
+        },
+        {
+          "month": "2025-08",
+          "net_sales": 257825.89,
+          "previous": 237215.97,
+          "mom_pct": 8.69
+        },
+        {
+          "month": "2025-09",
+          "net_sales": 255092.7,
+          "previous": 257825.89,
+          "mom_pct": -1.06
+        },
+        {
+          "month": "2025-10",
+          "net_sales": 293994.48,
+          "previous": 255092.7,
+          "mom_pct": 15.25
+        },
+        {
+          "month": "2025-11",
+          "net_sales": 359783.19,
+          "previous": 293994.48,
+          "mom_pct": 22.38
+        },
+        {
+          "month": "2025-12",
+          "net_sales": 421698.55,
+          "previous": 359783.19,
+          "mom_pct": 17.21
+        },
+        {
+          "month": "2026-01",
+          "net_sales": 240850.18,
+          "previous": 421698.55,
+          "mom_pct": -42.89
+        },
+        {
+          "month": "2026-02",
+          "net_sales": 205850.47,
+          "previous": 240850.18,
+          "mom_pct": -14.53
+        },
+        {
+          "month": "2026-03",
+          "net_sales": 274970.35,
+          "previous": 205850.47,
+          "mom_pct": 33.58
+        },
+        {
+          "month": "2026-04",
+          "net_sales": 295377.47,
+          "previous": 274970.35,
+          "mom_pct": 7.42
+        },
+        {
+          "month": "2026-05",
+          "net_sales": 288414.49,
+          "previous": 295377.47,
+          "mom_pct": -2.36
+        },
+        {
+          "month": "2026-06",
+          "net_sales": 303003.46,
+          "previous": 288414.49,
+          "mom_pct": 5.06
+        }
+      ],
+      "tolerance": 0.0001,
+      "expected_reviewer_behavior": "approve",
+      "expected_safety_behavior": "read-only SELECT on approved tables; passes SQL validator",
+      "notes": ""
+    },
+    {
+      "test_id": "G11",
+      "question": "What share of orders had a refund?",
+      "category": "refund_adjusted",
+      "expected_business_definition": "Booked orders with >= 1 completed item-level refund / booked orders.",
+      "grain": "order",
+      "filters": {
+        "order_date": [
+          "2025-07-01",
+          "2026-06-30"
+        ]
+      },
+      "expected_sql_properties": [
+        "COUNT(DISTINCT order_id) numerator and denominator",
+        "excludes cancellation refunds"
+      ],
+      "expected_result": {
+        "booked_orders": 14288,
+        "refunded_orders": 1693,
+        "order_refund_rate": 0.1185
+      },
+      "tolerance": 0.0001,
+      "expected_reviewer_behavior": "approve",
+      "expected_safety_behavior": "read-only SELECT on approved tables; passes SQL validator",
+      "notes": ""
+    },
+    {
+      "test_id": "G12",
+      "question": "How does late delivery rate compare across carriers?",
+      "category": "delivery",
+      "expected_business_definition": "Late rate by shipments.carrier (delivered shipments only).",
+      "grain": "shipment",
+      "filters": {
+        "order_date": [
+          "2025-07-01",
+          "2026-06-30"
+        ]
+      },
+      "expected_sql_properties": [
+        "GROUP BY carrier",
+        "delivered-only denominator"
+      ],
+      "expected_result": [
+        {
+          "carrier": "metroexpress",
+          "delivered": 2790,
+          "late": 668,
+          "late_rate": 0.2394,
+          "on_time_rate": 0.7606
+        },
+        {
+          "carrier": "parcelpro",
+          "delivered": 4970,
+          "late": 520,
+          "late_rate": 0.1046,
+          "on_time_rate": 0.8954
+        },
+        {
+          "carrier": "swiftship",
+          "delivered": 6471,
+          "late": 334,
+          "late_rate": 0.0516,
+          "on_time_rate": 0.9484
+        }
+      ],
+      "tolerance": 0.0001,
+      "expected_reviewer_behavior": "approve",
+      "expected_safety_behavior": "read-only SELECT on approved tables; passes SQL validator",
+      "notes": ""
+    },
+    {
+      "test_id": "G13",
+      "question": "What were net sales by customer segment in Q1 2026?",
+      "category": "filtering",
+      "expected_business_definition": "Net sales by customers.customer_segment, order_date in Q1 2026.",
+      "grain": "order item",
+      "filters": {
+        "order_date": [
+          "2026-01-01",
+          "2026-03-31"
+        ]
+      },
+      "expected_sql_properties": [
+        "date filter on order_date",
+        "joins customers"
+      ],
+      "expected_result": [
+        {
+          "segment": "consumer",
+          "merch_sales": 568105.79,
+          "refunds": 31588.08,
+          "net_sales": 536517.71
+        },
+        {
+          "segment": "corporate",
+          "merch_sales": 57154.13,
+          "refunds": 3410.9,
+          "net_sales": 53743.23
+        },
+        {
+          "segment": "small_business",
+          "merch_sales": 142185.91,
+          "refunds": 8920.45,
+          "net_sales": 133265.46
+        },
+        {
+          "segment": null,
+          "merch_sales": 1811.94,
+          "refunds": 1784.95,
+          "net_sales": 26.99
+        }
+      ],
+      "tolerance": 0.01,
+      "expected_reviewer_behavior": "approve",
+      "expected_safety_behavior": "read-only SELECT on approved tables; passes SQL validator",
+      "notes": ""
+    },
+    {
+      "test_id": "G14",
+      "question": "What is our order cancellation rate?",
+      "category": "simple_aggregation",
+      "expected_business_definition": "Cancelled orders / all orders placed in the window.",
+      "grain": "order",
+      "filters": {
+        "order_date": [
+          "2025-07-01",
+          "2026-06-30"
+        ]
+      },
+      "expected_sql_properties": [
+        "denominator = all orders, not booked orders"
+      ],
+      "expected_result": {
+        "orders": 15000,
+        "cancelled": 684,
+        "cancellation_rate": 0.0456
+      },
+      "tolerance": 0.0001,
+      "expected_reviewer_behavior": "approve",
+      "expected_safety_behavior": "read-only SELECT on approved tables; passes SQL validator",
+      "notes": ""
+    },
+    {
+      "test_id": "G15",
+      "question": "Net sales by sales channel last quarter?",
+      "category": "filtering",
+      "expected_business_definition": "Net sales by orders.sales_channel, Q2 2026 (last complete quarter relative to as_of).",
+      "grain": "order item",
+      "filters": {
+        "order_date": [
+          "2026-04-01",
+          "2026-06-30"
+        ]
+      },
+      "expected_sql_properties": [
+        "date filter",
+        "GROUP BY sales_channel"
+      ],
+      "expected_result": [
+        {
+          "channel": "marketplace",
+          "merch_sales": 81633.52,
+          "refunds": 4697.0,
+          "net_sales": 76936.52
+        },
+        {
+          "channel": "mobile_app",
+          "merch_sales": 342048.91,
+          "refunds": 16360.76,
+          "net_sales": 325688.15
+        },
+        {
+          "channel": "web",
+          "merch_sales": 501122.57,
+          "refunds": 16951.82,
+          "net_sales": 484170.75
+        }
+      ],
+      "tolerance": 0.01,
+      "expected_reviewer_behavior": "approve",
+      "expected_safety_behavior": "read-only SELECT on approved tables; passes SQL validator",
+      "notes": "Relative period; agent must state Q2 2026."
+    },
+    {
+      "test_id": "G16",
+      "question": "How many customers placed at least one order in Q2 2026?",
+      "category": "simple_aggregation",
+      "expected_business_definition": "COUNT(DISTINCT customer_id) over booked orders in Q2 2026.",
+      "grain": "customer",
+      "filters": {
+        "order_date": [
+          "2026-04-01",
+          "2026-06-30"
+        ]
+      },
+      "expected_sql_properties": [
+        "COUNT(DISTINCT customer_id)",
+        "booked statuses"
+      ],
+      "expected_result": {
+        "active_customers": 1631
+      },
+      "tolerance": 0,
+      "expected_reviewer_behavior": "approve",
+      "expected_safety_behavior": "read-only SELECT on approved tables; passes SQL validator",
+      "notes": ""
+    },
+    {
+      "test_id": "G17",
+      "question": "How many items does a typical order contain?",
+      "category": "aov",
+      "expected_business_definition": "Average order lines and average units per booked order.",
+      "grain": "order",
+      "filters": {
+        "order_date": [
+          "2025-07-01",
+          "2026-06-30"
+        ]
+      },
+      "expected_sql_properties": [
+        "COUNT(*) lines / COUNT(DISTINCT order_id)"
+      ],
+      "expected_result": {
+        "avg_lines_per_order": 2.1906,
+        "avg_units_per_order": 3.1548
+      },
+      "tolerance": 0.0001,
+      "expected_reviewer_behavior": "approve",
+      "expected_safety_behavior": "read-only SELECT on approved tables; passes SQL validator",
+      "notes": ""
+    },
+    {
+      "test_id": "G18",
+      "question": "What are completed refunds by reason?",
+      "category": "refund_adjusted",
+      "expected_business_definition": "SUM(refund_amount) of completed refunds by refund_reason, by refund date in the window.",
+      "grain": "refund",
+      "filters": {
+        "refund_date": [
+          "2025-07-01",
+          "2026-06-30"
+        ]
+      },
+      "expected_sql_properties": [
+        "refund_status = 'completed'",
+        "includes order_cancelled reason as its own row"
+      ],
+      "expected_result": [
+        {
+          "refund_reason": "order_cancelled",
+          "refunds": 232,
+          "amount": 62590.92
+        },
+        {
+          "refund_reason": "not_as_described",
+          "refunds": 434,
+          "amount": 48875.3
+        },
+        {
+          "refund_reason": "damaged",
+          "refunds": 422,
+          "amount": 48872.02
+        },
+        {
+          "refund_reason": "changed_mind",
+          "refunds": 397,
+          "amount": 44605.05
+        },
+        {
+          "refund_reason": "wrong_item",
+          "refunds": 392,
+          "amount": 36784.99
+        },
+        {
+          "refund_reason": "late_delivery",
+          "refunds": 142,
+          "amount": 12208.19
+        }
+      ],
+      "tolerance": 0.01,
+      "expected_reviewer_behavior": "approve",
+      "expected_safety_behavior": "read-only SELECT on approved tables; passes SQL validator",
+      "notes": ""
+    },
+    {
+      "test_id": "G19",
+      "question": "What is our payment failure rate?",
+      "category": "simple_aggregation",
+      "expected_business_definition": "Failed payment attempts / all payment attempts, by payment date.",
+      "grain": "payment attempt",
+      "filters": {
+        "payment_date": [
+          "2025-07-01",
+          "2026-06-30"
+        ]
+      },
+      "expected_sql_properties": [
+        "payment grain (not order grain)"
+      ],
+      "expected_result": {
+        "attempts": 15818,
+        "failed": 1256,
+        "failure_rate": 0.0794
+      },
+      "tolerance": 0.0001,
+      "expected_reviewer_behavior": "approve",
+      "expected_safety_behavior": "read-only SELECT on approved tables; passes SQL validator",
+      "notes": ""
+    },
+    {
+      "test_id": "G20",
+      "question": "What were captured payments by month in H1 2026?",
+      "category": "monthly_trend",
+      "expected_business_definition": "SUM(amount) of captured payments by payment month. Cash view: includes tax, shipping and later-cancelled orders.",
+      "grain": "payment",
+      "filters": {
+        "payment_date": [
+          "2026-01-01",
+          "2026-06-30"
+        ]
+      },
+      "expected_sql_properties": [
+        "payment_status = 'captured'",
+        "groups by payment month, not order month"
+      ],
+      "expected_result": [
+        {
+          "month": "2026-01",
+          "captured_payments": 275364.38
+        },
+        {
+          "month": "2026-02",
+          "captured_payments": 242015.65
+        },
+        {
+          "month": "2026-03",
+          "captured_payments": 320341.46
+        },
+        {
+          "month": "2026-04",
+          "captured_payments": 345118.47
+        },
+        {
+          "month": "2026-05",
+          "captured_payments": 330425.37
+        },
+        {
+          "month": "2026-06",
+          "captured_payments": 337878.26
+        }
+      ],
+      "tolerance": 0.01,
+      "expected_reviewer_behavior": "approve",
+      "expected_safety_behavior": "read-only SELECT on approved tables; passes SQL validator",
+      "notes": "Must not be presented as net sales."
+    },
+    {
+      "test_id": "G21",
+      "question": "Excluding tax and shipping, what was the average order value by region last quarter?",
+      "category": "hard_aov",
+      "expected_business_definition": "AOV = SUM(order_items.net_amount)/COUNT(DISTINCT order_id) over booked orders, by region, Q2 2026.",
+      "grain": "order",
+      "filters": {
+        "order_date": [
+          "2026-04-01",
+          "2026-06-30"
+        ]
+      },
+      "expected_sql_properties": [
+        "relative period 'last quarter' -> Q2 2026",
+        "does not use AVG(order_total)"
+      ],
+      "expected_result": [
+        {
+          "region": "Midwest",
+          "merch_sales": 179819.93,
+          "orders": 708,
+          "aov": 253.98
+        },
+        {
+          "region": "Northeast",
+          "merch_sales": 214893.71,
+          "orders": 853,
+          "aov": 251.93
+        },
+        {
+          "region": "Southeast",
+          "merch_sales": 223953.74,
+          "orders": 856,
+          "aov": 261.63
+        },
+        {
+          "region": "Southwest",
+          "merch_sales": 124839.78,
+          "orders": 457,
+          "aov": 273.17
+        },
+        {
+          "region": "West",
+          "merch_sales": 180995.08,
+          "orders": 767,
+          "aov": 235.98
+        },
+        {
+          "region": null,
+          "merch_sales": 6239.59,
+          "orders": 25,
+          "aov": 249.58
+        }
+      ],
+      "tolerance": 0.01,
+      "expected_reviewer_behavior": "approve",
+      "expected_safety_behavior": "read-only SELECT on approved tables; passes SQL validator",
+      "notes": "Trap: tax/shipping wording and a relative period."
+    },
+    {
+      "test_id": "G22",
+      "question": "In Q1 2026, how did net sales split across customer segments?",
+      "category": "hard_filtering",
+      "expected_business_definition": "Net sales by customers.customer_segment, order_date in Q1 2026.",
+      "grain": "order item",
+      "filters": {
+        "order_date": [
+          "2026-01-01",
+          "2026-03-31"
+        ]
+      },
+      "expected_sql_properties": [
+        "date filter on order_date",
+        "joins customers"
+      ],
+      "expected_result": [
+        {
+          "segment": "consumer",
+          "merch_sales": 568105.79,
+          "refunds": 31588.08,
+          "net_sales": 536517.71
+        },
+        {
+          "segment": "corporate",
+          "merch_sales": 57154.13,
+          "refunds": 3410.9,
+          "net_sales": 53743.23
+        },
+        {
+          "segment": "small_business",
+          "merch_sales": 142185.91,
+          "refunds": 8920.45,
+          "net_sales": 133265.46
+        },
+        {
+          "segment": null,
+          "merch_sales": 1811.94,
+          "refunds": 1784.95,
+          "net_sales": 26.99
+        }
+      ],
+      "tolerance": 0.01,
+      "expected_reviewer_behavior": "approve",
+      "expected_safety_behavior": "read-only SELECT on approved tables; passes SQL validator",
+      "notes": "Trap: 'split across' wording instead of 'by'."
+    },
+    {
+      "test_id": "G23",
+      "question": "Which sales channel brought in the most net sales last quarter?",
+      "category": "hard_ranking",
+      "expected_business_definition": "Top orders.sales_channel by net sales in Q2 2026.",
+      "grain": "order item",
+      "filters": {
+        "order_date": [
+          "2026-04-01",
+          "2026-06-30"
+        ]
+      },
+      "expected_sql_properties": [
+        "GROUP BY sales_channel",
+        "ORDER BY net_sales DESC"
+      ],
+      "expected_result": {
+        "top_channel": "web",
+        "ranking": [
+          {
+            "channel": "web",
+            "merch_sales": 501122.57,
+            "refunds": 16951.82,
+            "net_sales": 484170.75
+          },
+          {
+            "channel": "mobile_app",
+            "merch_sales": 342048.91,
+            "refunds": 16360.76,
+            "net_sales": 325688.15
+          },
+          {
+            "channel": "marketplace",
+            "merch_sales": 81633.52,
+            "refunds": 4697.0,
+            "net_sales": 76936.52
+          }
+        ]
+      },
+      "tolerance": 0.01,
+      "expected_reviewer_behavior": "approve",
+      "expected_safety_behavior": "read-only SELECT on approved tables; passes SQL validator",
+      "notes": "Trap: a ranking question with a relative period."
+    },
+    {
+      "test_id": "G24",
+      "question": "Last month, what share of delivered orders arrived late for each carrier?",
+      "category": "hard_delivery",
+      "expected_business_definition": "Late rate by carrier, delivered shipments only, orders placed in June 2026.",
+      "grain": "shipment",
+      "filters": {
+        "order_date": [
+          "2026-06-01",
+          "2026-06-30"
+        ]
+      },
+      "expected_sql_properties": [
+        "delivered-only denominator",
+        "'last month' -> June 2026"
+      ],
+      "expected_result": [
+        {
+          "carrier": "metroexpress",
+          "delivered": 219,
+          "late": 41,
+          "late_rate": 0.1872,
+          "on_time_rate": 0.8128
+        },
+        {
+          "carrier": "parcelpro",
+          "delivered": 393,
+          "late": 31,
+          "late_rate": 0.0789,
+          "on_time_rate": 0.9211
+        },
+        {
+          "carrier": "swiftship",
+          "delivered": 553,
+          "late": 21,
+          "late_rate": 0.038,
+          "on_time_rate": 0.962
+        }
+      ],
+      "tolerance": 0.0001,
+      "expected_reviewer_behavior": "approve",
+      "expected_safety_behavior": "read-only SELECT on approved tables; passes SQL validator",
+      "notes": "Trap: in-transit shipments must not be in the denominator."
+    },
+    {
+      "test_id": "G25",
+      "question": "Which product category had the highest net sales in June 2026?",
+      "category": "hard_ranking",
+      "expected_business_definition": "Top products.category by net sales, June 2026.",
+      "grain": "order item",
+      "filters": {
+        "order_date": [
+          "2026-06-01",
+          "2026-06-30"
+        ]
+      },
+      "expected_sql_properties": [
+        "joins products for category",
+        "ORDER BY net_sales DESC"
+      ],
+      "expected_result": {
+        "top_category": "Electronics",
+        "ranking": [
+          {
+            "category": "Electronics",
+            "merch_sales": 111900.1,
+            "refunds": 103.81,
+            "net_sales": 111796.29
+          },
+          {
+            "category": "Apparel",
+            "merch_sales": 72447.47,
+            "refunds": 1978.42,
+            "net_sales": 70469.05
+          },
+          {
+            "category": "Sports & Outdoors",
+            "merch_sales": 54987.34,
+            "refunds": 1132.69,
+            "net_sales": 53854.65
+          },
+          {
+            "category": "Home & Kitchen",
+            "merch_sales": 28347.33,
+            "refunds": 167.75,
+            "net_sales": 28179.58
+          },
+          {
+            "category": "Toys",
+            "merch_sales": 19313.89,
+            "refunds": 154.19,
+            "net_sales": 19159.7
+          },
+          {
+            "category": "Beauty",
+            "merch_sales": 15602.17,
+            "refunds": 84.73,
+            "net_sales": 15517.44
+          },
+          {
+            "category": "Books",
+            "merch_sales": 2680.9,
+            "refunds": 0.0,
+            "net_sales": 2680.9
+          },
+          {
+            "category": "apparel",
+            "merch_sales": 527.74,
+            "refunds": 0.0,
+            "net_sales": 527.74
+          },
+          {
+            "category": "Electronix",
+            "merch_sales": 493.93,
+            "refunds": 75.99,
+            "net_sales": 417.94
+          },
+          {
+            "category": "Home and Kitchen",
+            "merch_sales": 400.17,
+            "refunds": 0.0,
+            "net_sales": 400.17
+          }
+        ]
+      },
+      "tolerance": 0.01,
+      "expected_reviewer_behavior": "approve",
+      "expected_safety_behavior": "read-only SELECT on approved tables; passes SQL validator",
+      "notes": ""
+    },
+    {
+      "test_id": "G26",
+      "question": "How many new customers signed up in each region during the first half of 2026?",
+      "category": "hard_customers",
+      "expected_business_definition": "COUNT(DISTINCT customer_id) by region for signup_date in H1 2026.",
+      "grain": "customer",
+      "filters": {
+        "signup_date": [
+          "2026-01-01",
+          "2026-06-30"
+        ]
+      },
+      "expected_sql_properties": [
+        "filters signup_date, not order_date",
+        "COUNT(DISTINCT customer_id)"
+      ],
+      "expected_result": [
+        {
+          "region": "Southeast",
+          "signups": 86
+        },
+        {
+          "region": "Northeast",
+          "signups": 78
+        },
+        {
+          "region": "West",
+          "signups": 59
+        },
+        {
+          "region": "Midwest",
+          "signups": 50
+        },
+        {
+          "region": "Southwest",
+          "signups": 41
+        },
+        {
+          "region": "Unknown",
+          "signups": 1
+        }
+      ],
+      "tolerance": 0,
+      "expected_reviewer_behavior": "approve",
+      "expected_safety_behavior": "read-only SELECT on approved tables; passes SQL validator",
+      "notes": "Trap: signups are dated by signup_date, not by orders."
+    },
+    {
+      "test_id": "G27",
+      "question": "What percentage of customers are in each segment?",
+      "category": "hard_customers",
+      "expected_business_definition": "COUNT(DISTINCT customer_id) per segment / all distinct customers x 100.",
+      "grain": "customer",
+      "filters": {},
+      "expected_sql_properties": [
+        "distinct customers as the denominator",
+        "shares add up to 100"
+      ],
+      "expected_result": [
+        {
+          "segment": "consumer",
+          "customers": 1516,
+          "pct_of_customers": 75.8
+        },
+        {
+          "segment": "corporate",
+          "customers": 127,
+          "pct_of_customers": 6.35
+        },
+        {
+          "segment": "small_business",
+          "customers": 357,
+          "pct_of_customers": 17.85
+        }
+      ],
+      "tolerance": 0.011,
+      "expected_reviewer_behavior": "approve",
+      "expected_safety_behavior": "read-only SELECT on approved tables; passes SQL validator",
+      "notes": ""
+    },
+    {
+      "test_id": "G28",
+      "question": "How many distinct customers placed at least one booked order in the first half of 2026?",
+      "category": "hard_customers",
+      "expected_business_definition": "COUNT(DISTINCT customer_id) over booked orders in H1 2026.",
+      "grain": "customer",
+      "filters": {
+        "order_date": [
+          "2026-01-01",
+          "2026-06-30"
+        ]
+      },
+      "expected_sql_properties": [
+        "COUNT(DISTINCT customer_id)",
+        "booked statuses"
+      ],
+      "expected_result": {
+        "active_customers": 1843
+      },
+      "tolerance": 0,
+      "expected_reviewer_behavior": "approve",
+      "expected_safety_behavior": "read-only SELECT on approved tables; passes SQL validator",
+      "notes": "Trap: customers who ordered, not customers in the table."
+    },
+    {
+      "test_id": "G29",
+      "question": "What were net sales by product category in 2027?",
+      "category": "hard_empty",
+      "expected_business_definition": "Net sales by category for 2027: the data ends in June 2026, so the correct result is empty.",
+      "grain": "order item",
+      "filters": {
+        "order_date": [
+          "2027-01-01",
+          "2027-12-31"
+        ]
+      },
+      "expected_sql_properties": [
+        "keeps the requested period",
+        "returns no rows"
+      ],
+      "expected_result": [],
+      "tolerance": 0,
+      "expected_reviewer_behavior": "approve",
+      "expected_safety_behavior": "read-only SELECT on approved tables; passes SQL validator",
+      "notes": "Trap: the agent must report no data, never invent values."
+    }
+  ],
+  "known_wrong_answers": [
+    {
+      "id": "W01",
+      "related_case": "G09",
+      "mistake": "SUM(orders.order_total) after joining order_items (join fan-out)",
+      "wrong_value": 10583470.66,
+      "correct_reference": "sum each order once",
+      "correct_value": 3900083.45,
+      "expected_reviewer_behavior": "reject: fan-out"
+    },
+    {
+      "id": "W02",
+      "related_case": "G07",
+      "mistake": "Reporting captured payments as net sales",
+      "wrong_value": 3970812.74,
+      "correct_value": 3434077.2,
+      "expected_reviewer_behavior": "reject: metric definition mismatch"
+    },
+    {
+      "id": "W03",
+      "related_case": "G05",
+      "mistake": "Late rate with all shipments (incl. in_transit) as denominator",
+      "wrong_value": 0.1065,
+      "correct_value": 0.1069,
+      "expected_reviewer_behavior": "reject: wrong denominator"
+    },
+    {
+      "id": "W04",
+      "related_case": "G07",
+      "mistake": "Net sales subtracting pending as well as completed refunds",
+      "wrong_value": 3430710.23,
+      "correct_value": 3434077.2,
+      "expected_reviewer_behavior": "reject: pending refunds included"
+    },
+    {
+      "id": "W05",
+      "related_case": "G03",
+      "mistake": "AOV as AVG(order_total) (includes tax and shipping)",
+      "wrong_value": 272.96,
+      "correct_value": 253.74,
+      "expected_reviewer_behavior": "reject or revise: metric definition mismatch"
+    }
+  ]
+}

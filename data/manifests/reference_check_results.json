@@ -1,0 +1,744 @@
+{
+  "clean": [
+    {
+      "rule_id": "CUS_PK_UNIQUE",
+      "table": "customers",
+      "severity": "critical",
+      "status": "pass",
+      "violations": 0,
+      "example_ids": "",
+      "description": "customer_id is unique"
+    },
+    {
+      "rule_id": "CUS_REQUIRED_NOT_NULL",
+      "table": "customers",
+      "severity": "high",
+      "status": "pass",
+      "violations": 0,
+      "example_ids": "",
+      "description": "Required customer columns are not null"
+    },
+    {
+      "rule_id": "CUS_REGION_ALLOWED",
+      "table": "customers",
+      "severity": "medium",
+      "status": "pass",
+      "violations": 0,
+      "example_ids": "",
+      "description": "region in allowed values"
+    },
+    {
+      "rule_id": "CUS_EMAIL_UNIQUE",
+      "table": "customers",
+      "severity": "medium",
+      "status": "pass",
+      "violations": 0,
+      "example_ids": "",
+      "description": "email is unique"
+    },
+    {
+      "rule_id": "PRD_PK_UNIQUE",
+      "table": "products",
+      "severity": "critical",
+      "status": "pass",
+      "violations": 0,
+      "example_ids": "",
+      "description": "product_id is unique"
+    },
+    {
+      "rule_id": "PRD_SKU_UNIQUE",
+      "table": "products",
+      "severity": "high",
+      "status": "pass",
+      "violations": 0,
+      "example_ids": "",
+      "description": "sku (business key) is unique"
+    },
+    {
+      "rule_id": "PRD_CATEGORY_ALLOWED",
+      "table": "products",
+      "severity": "medium",
+      "status": "pass",
+      "violations": 0,
+      "example_ids": "",
+      "description": "category in allowed values"
+    },
+    {
+      "rule_id": "PRD_PRICE_VALID",
+      "table": "products",
+      "severity": "high",
+      "status": "pass",
+      "violations": 0,
+      "example_ids": "",
+      "description": "list_price > 0 and 0 < unit_cost < list_price"
+    },
+    {
+      "rule_id": "ORD_PK_UNIQUE",
+      "table": "orders",
+      "severity": "critical",
+      "status": "pass",
+      "violations": 0,
+      "example_ids": "",
+      "description": "order_id is unique"
+    },
+    {
+      "rule_id": "ORD_REQUIRED_NOT_NULL",
+      "table": "orders",
+      "severity": "high",
+      "status": "pass",
+      "violations": 0,
+      "example_ids": "",
+      "description": "Required order columns are not null"
+    },
+    {
+      "rule_id": "ORD_STATUS_ALLOWED",
+      "table": "orders",
+      "severity": "medium",
+      "status": "pass",
+      "violations": 0,
+      "example_ids": "",
+      "description": "order_status in allowed values"
+    },
+    {
+      "rule_id": "ORD_CUSTOMER_FK",
+      "table": "orders",
+      "severity": "high",
+      "status": "pass",
+      "violations": 0,
+      "example_ids": "",
+      "description": "customer_id exists in customers"
+    },
+    {
+      "rule_id": "ORD_TOTAL_CONSISTENT",
+      "table": "orders",
+      "severity": "high",
+      "status": "pass",
+      "violations": 0,
+      "example_ids": "",
+      "description": "order_total = items_subtotal - discount_amount + shipping_amount + tax_amount"
+    },
+    {
+      "rule_id": "ORD_SUBTOTAL_MATCHES_ITEMS",
+      "table": "orders",
+      "severity": "high",
+      "status": "pass",
+      "violations": 0,
+      "example_ids": "",
+      "description": "items_subtotal = SUM(order_items.gross_amount)"
+    },
+    {
+      "rule_id": "ORD_CANCELLED_TS_CONSISTENT",
+      "table": "orders",
+      "severity": "medium",
+      "status": "pass",
+      "violations": 0,
+      "example_ids": "",
+      "description": "cancelled_timestamp set iff status = cancelled"
+    },
+    {
+      "rule_id": "ORD_NOT_FUTURE",
+      "table": "orders",
+      "severity": "medium",
+      "status": "pass",
+      "violations": 0,
+      "example_ids": "",
+      "description": "order_timestamp <= snapshot time"
+    },
+    {
+      "rule_id": "ITM_PK_UNIQUE",
+      "table": "order_items",
+      "severity": "critical",
+      "status": "pass",
+      "violations": 0,
+      "example_ids": "",
+      "description": "order_item_id is unique"
+    },
+    {
+      "rule_id": "ITM_LINE_UNIQUE",
+      "table": "order_items",
+      "severity": "high",
+      "status": "pass",
+      "violations": 0,
+      "example_ids": "",
+      "description": "(order_id, line_number) is unique"
+    },
+    {
+      "rule_id": "ITM_ORDER_FK",
+      "table": "order_items",
+      "severity": "high",
+      "status": "pass",
+      "violations": 0,
+      "example_ids": "",
+      "description": "order_id exists in orders"
+    },
+    {
+      "rule_id": "ITM_PRODUCT_FK",
+      "table": "order_items",
+      "severity": "high",
+      "status": "pass",
+      "violations": 0,
+      "example_ids": "",
+      "description": "product_id exists in products"
+    },
+    {
+      "rule_id": "ITM_QUANTITY_RANGE",
+      "table": "order_items",
+      "severity": "high",
+      "status": "pass",
+      "violations": 0,
+      "example_ids": "",
+      "description": "quantity between 1 and 10"
+    },
+    {
+      "rule_id": "ITM_AMOUNTS_CONSISTENT",
+      "table": "order_items",
+      "severity": "high",
+      "status": "pass",
+      "violations": 0,
+      "example_ids": "",
+      "description": "gross = quantity * unit_price and net = gross - discount"
+    },
+    {
+      "rule_id": "PAY_PK_UNIQUE",
+      "table": "payments",
+      "severity": "critical",
+      "status": "pass",
+      "violations": 0,
+      "example_ids": "",
+      "description": "payment_id is unique"
+    },
+    {
+      "rule_id": "PAY_TXN_UNIQUE",
+      "table": "payments",
+      "severity": "critical",
+      "status": "pass",
+      "violations": 0,
+      "example_ids": "",
+      "description": "provider_transaction_id is unique"
+    },
+    {
+      "rule_id": "PAY_ORDER_FK",
+      "table": "payments",
+      "severity": "high",
+      "status": "pass",
+      "violations": 0,
+      "example_ids": "",
+      "description": "order_id exists in orders"
+    },
+    {
+      "rule_id": "PAY_STATUS_ALLOWED",
+      "table": "payments",
+      "severity": "medium",
+      "status": "pass",
+      "violations": 0,
+      "example_ids": "",
+      "description": "payment_status in allowed values"
+    },
+    {
+      "rule_id": "PAY_AFTER_ORDER",
+      "table": "payments",
+      "severity": "medium",
+      "status": "pass",
+      "violations": 0,
+      "example_ids": "",
+      "description": "payment_timestamp >= order_timestamp"
+    },
+    {
+      "rule_id": "PAY_CAPTURED_MATCHES_ORDER",
+      "table": "payments",
+      "severity": "critical",
+      "status": "pass",
+      "violations": 0,
+      "example_ids": "",
+      "description": "Each booked order has exactly one captured payment equal to order_total"
+    },
+    {
+      "rule_id": "PAY_FAILURE_REASON_CONSISTENT",
+      "table": "payments",
+      "severity": "low",
+      "status": "pass",
+      "violations": 0,
+      "example_ids": "",
+      "description": "failure_reason set iff status = failed"
+    },
+    {
+      "rule_id": "SHP_PK_UNIQUE",
+      "table": "shipments",
+      "severity": "critical",
+      "status": "pass",
+      "violations": 0,
+      "example_ids": "",
+      "description": "shipment_id is unique"
+    },
+    {
+      "rule_id": "SHP_ONE_PER_ORDER",
+      "table": "shipments",
+      "severity": "medium",
+      "status": "pass",
+      "violations": 0,
+      "example_ids": "",
+      "description": "At most one shipment per order (v1)"
+    },
+    {
+      "rule_id": "SHP_ORDER_FK",
+      "table": "shipments",
+      "severity": "high",
+      "status": "pass",
+      "violations": 0,
+      "example_ids": "",
+      "description": "order_id exists in orders"
+    },
+    {
+      "rule_id": "SHP_DELIVERED_TS_CONSISTENT",
+      "table": "shipments",
+      "severity": "high",
+      "status": "pass",
+      "violations": 0,
+      "example_ids": "",
+      "description": "delivered_timestamp set iff status = delivered"
+    },
+    {
+      "rule_id": "SHP_DELIVERY_AFTER_SHIP",
+      "table": "shipments",
+      "severity": "high",
+      "status": "pass",
+      "violations": 0,
+      "example_ids": "",
+      "description": "delivered_timestamp >= shipped_timestamp"
+    },
+    {
+      "rule_id": "SHP_STATUS_MATCHES_ORDER",
+      "table": "shipments",
+      "severity": "medium",
+      "status": "pass",
+      "violations": 0,
+      "example_ids": "",
+      "description": "delivered shipment <-> delivered order; in_transit <-> shipped order"
+    },
+    {
+      "rule_id": "REF_PK_UNIQUE",
+      "table": "refunds",
+      "severity": "critical",
+      "status": "pass",
+      "violations": 0,
+      "example_ids": "",
+      "description": "refund_id is unique"
+    },
+    {
+      "rule_id": "REF_ORDER_FK",
+      "table": "refunds",
+      "severity": "high",
+      "status": "pass",
+      "violations": 0,
+      "example_ids": "",
+      "description": "order_id exists in orders"
+    },
+    {
+      "rule_id": "REF_ITEM_FK",
+      "table": "refunds",
+      "severity": "high",
+      "status": "pass",
+      "violations": 0,
+      "example_ids": "",
+      "description": "order_item_id (when set) exists in order_items"
+    },
+    {
+      "rule_id": "REF_PAYMENT_FK",
+      "table": "refunds",
+      "severity": "high",
+      "status": "pass",
+      "violations": 0,
+      "example_ids": "",
+      "description": "payment_id exists in payments"
+    },
+    {
+      "rule_id": "REF_WITHIN_REFUNDABLE",
+      "table": "refunds",
+      "severity": "critical",
+      "status": "pass",
+      "violations": 0,
+      "example_ids": "",
+      "description": "Item refunds <= item net_amount; order-level refunds <= captured amount"
+    },
+    {
+      "rule_id": "REF_ITEM_NULL_ONLY_CANCEL",
+      "table": "refunds",
+      "severity": "medium",
+      "status": "pass",
+      "violations": 0,
+      "example_ids": "",
+      "description": "order_item_id is NULL only for order_cancelled refunds"
+    }
+  ],
+  "corrupted": [
+    {
+      "rule_id": "CUS_PK_UNIQUE",
+      "table": "customers",
+      "severity": "critical",
+      "status": "fail",
+      "violations": 5,
+      "example_ids": "CUS000192, CUS000705, CUS000766",
+      "description": "customer_id is unique"
+    },
+    {
+      "rule_id": "CUS_REQUIRED_NOT_NULL",
+      "table": "customers",
+      "severity": "high",
+      "status": "fail",
+      "violations": 10,
+      "example_ids": "CUS000102, CUS000391, CUS000626",
+      "description": "Required customer columns are not null"
+    },
+    {
+      "rule_id": "CUS_REGION_ALLOWED",
+      "table": "customers",
+      "severity": "medium",
+      "status": "pass",
+      "violations": 0,
+      "example_ids": "",
+      "description": "region in allowed values"
+    },
+    {
+      "rule_id": "CUS_EMAIL_UNIQUE",
+      "table": "customers",
+      "severity": "medium",
+      "status": "fail",
+      "violations": 5,
+      "example_ids": "customer000192@example.com, customer000705@example.com, customer000766@example.com",
+      "description": "email is unique"
+    },
+    {
+      "rule_id": "PRD_PK_UNIQUE",
+      "table": "products",
+      "severity": "critical",
+      "status": "pass",
+      "violations": 0,
+      "example_ids": "",
+      "description": "product_id is unique"
+    },
+    {
+      "rule_id": "PRD_SKU_UNIQUE",
+      "table": "products",
+      "severity": "high",
+      "status": "fail",
+      "violations": 2,
+      "example_ids": "SKU-APP-00012, SKU-HOM-00150",
+      "description": "sku (business key) is unique"
+    },
+    {
+      "rule_id": "PRD_CATEGORY_ALLOWED",
+      "table": "products",
+      "severity": "medium",
+      "status": "fail",
+      "violations": 3,
+      "example_ids": "PRD00106, PRD00132, PRD00175",
+      "description": "category in allowed values"
+    },
+    {
+      "rule_id": "PRD_PRICE_VALID",
+      "table": "products",
+      "severity": "high",
+      "status": "pass",
+      "violations": 0,
+      "example_ids": "",
+      "description": "list_price > 0 and 0 < unit_cost < list_price"
+    },
+    {
+      "rule_id": "ORD_PK_UNIQUE",
+      "table": "orders",
+      "severity": "critical",
+      "status": "pass",
+      "violations": 0,
+      "example_ids": "",
+      "description": "order_id is unique"
+    },
+    {
+      "rule_id": "ORD_REQUIRED_NOT_NULL",
+      "table": "orders",
+      "severity": "high",
+      "status": "pass",
+      "violations": 0,
+      "example_ids": "",
+      "description": "Required order columns are not null"
+    },
+    {
+      "rule_id": "ORD_STATUS_ALLOWED",
+      "table": "orders",
+      "severity": "medium",
+      "status": "fail",
+      "violations": 6,
+      "example_ids": "ORD0002530, ORD0002992, ORD0003690",
+      "description": "order_status in allowed values"
+    },
+    {
+      "rule_id": "ORD_CUSTOMER_FK",
+      "table": "orders",
+      "severity": "high",
+      "status": "fail",
+      "violations": 8,
+      "example_ids": "ORD0001550, ORD0003289, ORD0003772",
+      "description": "customer_id exists in customers"
+    },
+    {
+      "rule_id": "ORD_TOTAL_CONSISTENT",
+      "table": "orders",
+      "severity": "high",
+      "status": "fail",
+      "violations": 10,
+      "example_ids": "ORD0000653, ORD0000683, ORD0002003",
+      "description": "order_total = items_subtotal - discount_amount + shipping_amount + tax_amount"
+    },
+    {
+      "rule_id": "ORD_SUBTOTAL_MATCHES_ITEMS",
+      "table": "orders",
+      "severity": "high",
+      "status": "fail",
+      "violations": 12,
+      "example_ids": "ORD0001069, ORD0004234, ORD0004408",
+      "description": "items_subtotal = SUM(order_items.gross_amount)"
+    },
+    {
+      "rule_id": "ORD_CANCELLED_TS_CONSISTENT",
+      "table": "orders",
+      "severity": "medium",
+      "status": "pass",
+      "violations": 0,
+      "example_ids": "",
+      "description": "cancelled_timestamp set iff status = cancelled"
+    },
+    {
+      "rule_id": "ORD_NOT_FUTURE",
+      "table": "orders",
+      "severity": "medium",
+      "status": "pass",
+      "violations": 0,
+      "example_ids": "",
+      "description": "order_timestamp <= snapshot time"
+    },
+    {
+      "rule_id": "ITM_PK_UNIQUE",
+      "table": "order_items",
+      "severity": "critical",
+      "status": "fail",
+      "violations": 12,
+      "example_ids": "ITM00002344, ITM00009253, ITM00009631",
+      "description": "order_item_id is unique"
+    },
+    {
+      "rule_id": "ITM_LINE_UNIQUE",
+      "table": "order_items",
+      "severity": "high",
+      "status": "fail",
+      "violations": 12,
+      "example_ids": "ITM00002344, ITM00009253, ITM00009631",
+      "description": "(order_id, line_number) is unique"
+    },
+    {
+      "rule_id": "ITM_ORDER_FK",
+      "table": "order_items",
+      "severity": "high",
+      "status": "fail",
+      "violations": 5,
+      "example_ids": "ITM90000000, ITM90000001, ITM90000002",
+      "description": "order_id exists in orders"
+    },
+    {
+      "rule_id": "ITM_PRODUCT_FK",
+      "table": "order_items",
+      "severity": "high",
+      "status": "pass",
+      "violations": 0,
+      "example_ids": "",
+      "description": "product_id exists in products"
+    },
+    {
+      "rule_id": "ITM_QUANTITY_RANGE",
+      "table": "order_items",
+      "severity": "high",
+      "status": "fail",
+      "violations": 5,
+      "example_ids": "ITM00003673, ITM00005733, ITM00007483",
+      "description": "quantity between 1 and 10"
+    },
+    {
+      "rule_id": "ITM_AMOUNTS_CONSISTENT",
+      "table": "order_items",
+      "severity": "high",
+      "status": "fail",
+      "violations": 5,
+      "example_ids": "ITM00003673, ITM00005733, ITM00007483",
+      "description": "gross = quantity * unit_price and net = gross - discount"
+    },
+    {
+      "rule_id": "PAY_PK_UNIQUE",
+      "table": "payments",
+      "severity": "critical",
+      "status": "pass",
+      "violations": 0,
+      "example_ids": "",
+      "description": "payment_id is unique"
+    },
+    {
+      "rule_id": "PAY_TXN_UNIQUE",
+      "table": "payments",
+      "severity": "critical",
+      "status": "fail",
+      "violations": 15,
+      "example_ids": "txn_162944dbbf4b7215, txn_1e30cd6f9b4e17d8, txn_1ed1a475dc12fe25",
+      "description": "provider_transaction_id is unique"
+    },
+    {
+      "rule_id": "PAY_ORDER_FK",
+      "table": "payments",
+      "severity": "high",
+      "status": "pass",
+      "violations": 0,
+      "example_ids": "",
+      "description": "order_id exists in orders"
+    },
+    {
+      "rule_id": "PAY_STATUS_ALLOWED",
+      "table": "payments",
+      "severity": "medium",
+      "status": "pass",
+      "violations": 0,
+      "example_ids": "",
+      "description": "payment_status in allowed values"
+    },
+    {
+      "rule_id": "PAY_AFTER_ORDER",
+      "table": "payments",
+      "severity": "medium",
+      "status": "fail",
+      "violations": 5,
+      "example_ids": "PAY0000404, PAY0002340, PAY0002623",
+      "description": "payment_timestamp >= order_timestamp"
+    },
+    {
+      "rule_id": "PAY_CAPTURED_MATCHES_ORDER",
+      "table": "payments",
+      "severity": "critical",
+      "status": "fail",
+      "violations": 15,
+      "example_ids": "ORD0000255, ORD0000727, ORD0000850",
+      "description": "Each booked order has exactly one captured payment equal to order_total"
+    },
+    {
+      "rule_id": "PAY_FAILURE_REASON_CONSISTENT",
+      "table": "payments",
+      "severity": "low",
+      "status": "pass",
+      "violations": 0,
+      "example_ids": "",
+      "description": "failure_reason set iff status = failed"
+    },
+    {
+      "rule_id": "SHP_PK_UNIQUE",
+      "table": "shipments",
+      "severity": "critical",
+      "status": "pass",
+      "violations": 0,
+      "example_ids": "",
+      "description": "shipment_id is unique"
+    },
+    {
+      "rule_id": "SHP_ONE_PER_ORDER",
+      "table": "shipments",
+      "severity": "medium",
+      "status": "pass",
+      "violations": 0,
+      "example_ids": "",
+      "description": "At most one shipment per order (v1)"
+    },
+    {
+      "rule_id": "SHP_ORDER_FK",
+      "table": "shipments",
+      "severity": "high",
+      "status": "pass",
+      "violations": 0,
+      "example_ids": "",
+      "description": "order_id exists in orders"
+    },
+    {
+      "rule_id": "SHP_DELIVERED_TS_CONSISTENT",
+      "table": "shipments",
+      "severity": "high",
+      "status": "fail",
+      "violations": 6,
+      "example_ids": "SHP0001329, SHP0002271, SHP0002470",
+      "description": "delivered_timestamp set iff status = delivered"
+    },
+    {
+      "rule_id": "SHP_DELIVERY_AFTER_SHIP",
+      "table": "shipments",
+      "severity": "high",
+      "status": "fail",
+      "violations": 7,
+      "example_ids": "SHP0003754, SHP0005112, SHP0005278",
+      "description": "delivered_timestamp >= shipped_timestamp"
+    },
+    {
+      "rule_id": "SHP_STATUS_MATCHES_ORDER",
+      "table": "shipments",
+      "severity": "medium",
+      "status": "pass",
+      "violations": 0,
+      "example_ids": "",
+      "description": "delivered shipment <-> delivered order; in_transit <-> shipped order"
+    },
+    {
+      "rule_id": "REF_PK_UNIQUE",
+      "table": "refunds",
+      "severity": "critical",
+      "status": "pass",
+      "violations": 0,
+      "example_ids": "",
+      "description": "refund_id is unique"
+    },
+    {
+      "rule_id": "REF_ORDER_FK",
+      "table": "refunds",
+      "severity": "high",
+      "status": "pass",
+      "violations": 0,
+      "example_ids": "",
+      "description": "order_id exists in orders"
+    },
+    {
+      "rule_id": "REF_ITEM_FK",
+      "table": "refunds",
+      "severity": "high",
+      "status": "pass",
+      "violations": 0,
+      "example_ids": "",
+      "description": "order_item_id (when set) exists in order_items"
+    },
+    {
+      "rule_id": "REF_PAYMENT_FK",
+      "table": "refunds",
+      "severity": "high",
+      "status": "pass",
+      "violations": 0,
+      "example_ids": "",
+      "description": "payment_id exists in payments"
+    },
+    {
+      "rule_id": "REF_WITHIN_REFUNDABLE",
+      "table": "refunds",
+      "severity": "critical",
+      "status": "fail",
+      "violations": 6,
+      "example_ids": "REF000186, REF000199, REF000208",
+      "description": "Item refunds <= item net_amount; order-level refunds <= captured amount"
+    },
+    {
+      "rule_id": "REF_ITEM_NULL_ONLY_CANCEL",
+      "table": "refunds",
+      "severity": "medium",
+      "status": "pass",
+      "violations": 0,
+      "example_ids": "",
+      "description": "order_item_id is NULL only for order_cancelled refunds"
+    }
+  ]
+}

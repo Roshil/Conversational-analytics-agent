@@ -1,0 +1,32 @@
+# Secrets - never commit
+.env
+.env.*
+!.env.example
+*service-account*.json
+*-key.json
+credentials*.json
+configs/config.yaml
+
+# Generated data (reproducible from seed; manifests ARE committed)
+data/generated/*
+!data/generated/.gitkeep
+
+# Python / Jupyter
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+.ipynb_checkpoints/
+.pytest_cache/
+build/
+dist/
+
+# Editors / OS
+.vscode/settings.json
+.idea/
+.DS_Store
+Thumbs.db
+
+# Generated validation/review reports
+reports/

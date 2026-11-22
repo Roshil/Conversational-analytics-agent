@@ -1,0 +1,35 @@
+# Copy to configs/config.yaml (git-ignored) and adjust. Secrets stay in .env.
+data_generation:
+  seed: 20260701
+  n_customers: 2000
+  n_products: 250
+  n_orders: 15000
+  start_date: "2025-07-01"
+  end_date: "2026-06-30"
+  as_of: "2026-07-03 00:00:00"   # UTC snapshot; relative periods resolve against this
+  corruption_seed: 777
+
+bigquery:               # used from Stage 3
+  project_id: ${GOOGLE_CLOUD_PROJECT}
+  location: US
+  datasets:
+    clean: analytics_agent_dev
+    corrupted: analytics_agent_corrupted
+  approved_tables: [customers, products, orders, order_items, payments, shipments, refunds]
+  blocked_columns: [customers.email]
+  limits:
+    maximum_bytes_billed: 100000000   # 100 MB per query
+    timeout_seconds: 60
+    max_result_rows: 1000
+
+gemini:                 # used from Stage 4/6; the API key stays in .env (GEMINI_API_KEY)
+  model: gemini-3.8-flash          # GEMINI_MODEL in .env overrides this
+  timeout_seconds: 90
+  max_retries: 2                   # bounded retries for rate limits / transient server errors
+  temperature: 0.0
+  max_output_tokens: 8192
+
+agent:                  # used from Stage 6
+  max_sql_revisions: 2
+  max_answer_revisions: 1
+  max_infra_retries: 2

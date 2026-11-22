@@ -1,0 +1,56 @@
+[
+  {
+    "name": "order_item_id",
+    "type": "STRING",
+    "mode": "REQUIRED",
+    "description": "Surrogate order line identifier, format ITM00000001."
+  },
+  {
+    "name": "order_id",
+    "type": "STRING",
+    "mode": "REQUIRED",
+    "description": "FK to orders.order_id."
+  },
+  {
+    "name": "line_number",
+    "type": "INTEGER",
+    "mode": "REQUIRED",
+    "description": "1-based line number within the order; (order_id, line_number) is unique."
+  },
+  {
+    "name": "product_id",
+    "type": "STRING",
+    "mode": "REQUIRED",
+    "description": "FK to products.product_id. A product appears at most once per order."
+  },
+  {
+    "name": "quantity",
+    "type": "INTEGER",
+    "mode": "REQUIRED",
+    "description": "Units ordered, integer between 1 and 10."
+  },
+  {
+    "name": "unit_price",
+    "type": "NUMERIC",
+    "mode": "REQUIRED",
+    "description": "Price per unit charged on this order (equals product list_price in this version)."
+  },
+  {
+    "name": "gross_amount",
+    "type": "NUMERIC",
+    "mode": "REQUIRED",
+    "description": "quantity * unit_price."
+  },
+  {
+    "name": "discount_amount",
+    "type": "NUMERIC",
+    "mode": "REQUIRED",
+    "description": "Line discount, 0 <= discount_amount < gross_amount."
+  },
+  {
+    "name": "net_amount",
+    "type": "NUMERIC",
+    "mode": "REQUIRED",
+    "description": "gross_amount - discount_amount. Merchandise value after discount, excludes tax and shipping."
+  }
+]

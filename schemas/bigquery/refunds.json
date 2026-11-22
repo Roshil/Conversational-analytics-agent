@@ -1,0 +1,50 @@
+[
+  {
+    "name": "refund_id",
+    "type": "STRING",
+    "mode": "REQUIRED",
+    "description": "Surrogate refund identifier, format REF000001."
+  },
+  {
+    "name": "order_id",
+    "type": "STRING",
+    "mode": "REQUIRED",
+    "description": "FK to orders.order_id."
+  },
+  {
+    "name": "order_item_id",
+    "type": "STRING",
+    "mode": "NULLABLE",
+    "description": "FK to order_items. NULL means an order-level refund (used for cancellations, refunding the full captured amount)."
+  },
+  {
+    "name": "payment_id",
+    "type": "STRING",
+    "mode": "REQUIRED",
+    "description": "FK to the captured payments.payment_id being refunded."
+  },
+  {
+    "name": "refund_timestamp",
+    "type": "TIMESTAMP",
+    "mode": "REQUIRED",
+    "description": "When the refund was initiated (UTC)."
+  },
+  {
+    "name": "refund_amount",
+    "type": "NUMERIC",
+    "mode": "REQUIRED",
+    "description": "Refunded amount in USD (> 0). Item refunds cover merchandise only (no tax/shipping) and may be partial."
+  },
+  {
+    "name": "refund_reason",
+    "type": "STRING",
+    "mode": "REQUIRED",
+    "description": "Reason code."
+  },
+  {
+    "name": "refund_status",
+    "type": "STRING",
+    "mode": "REQUIRED",
+    "description": "completed = money returned; pending = initiated, not yet settled. Only completed refunds reduce net sales."
+  }
+]

@@ -1,0 +1,52 @@
+[
+  {
+    "case": "pending_payment_orders",
+    "count": 22,
+    "why_legitimate": "Recent orders awaiting payment confirmation; excluded from sales, not an error."
+  },
+  {
+    "case": "failed_then_captured_payments",
+    "count": 994,
+    "why_legitimate": "A declined attempt followed by a successful one; only the captured row counts."
+  },
+  {
+    "case": "cancelled_orders_with_captured_payment_and_full_refund",
+    "count": 232,
+    "why_legitimate": "Paid then cancelled; an order-level refund returns the full amount."
+  },
+  {
+    "case": "cancelled_orders_without_payment",
+    "count": 190,
+    "why_legitimate": "Cancelled before any payment attempt."
+  },
+  {
+    "case": "partial_item_refunds",
+    "count": 528,
+    "why_legitimate": "Refund below the line's net amount (e.g. goodwill credit)."
+  },
+  {
+    "case": "pending_refunds",
+    "count": 28,
+    "why_legitimate": "Initiated within the last days of the snapshot; not yet settled."
+  },
+  {
+    "case": "in_transit_shipments",
+    "count": 54,
+    "why_legitimate": "No delivered_timestamp yet; excluded from on-time denominators."
+  },
+  {
+    "case": "processing_orders_without_shipment",
+    "count": 3,
+    "why_legitimate": "Paid but not yet shipped."
+  },
+  {
+    "case": "customers_without_orders",
+    "count": 98,
+    "why_legitimate": "Registered but never purchased."
+  },
+  {
+    "case": "products_never_sold",
+    "count": 0,
+    "why_legitimate": "Catalog items with no sales in the window."
+  }
+]

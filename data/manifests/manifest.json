@@ -1,0 +1,606 @@
+{
+  "project": "analytics-agent",
+  "dataset_version": "v1",
+  "generation_config": {
+    "seed": 20260701,
+    "n_customers": 2000,
+    "n_products": 250,
+    "n_orders": 15000,
+    "start_date": "2025-07-01",
+    "end_date": "2026-06-30",
+    "as_of": "2026-07-03 00:00:00",
+    "customer_history_start": "2023-01-01"
+  },
+  "corruption_seed": 777,
+  "environment": {
+    "python": "3.12.16",
+    "numpy": "2.2.6",
+    "pandas": "2.2.3",
+    "pyarrow": "19.0.1"
+  },
+  "tables": {
+    "customers": {
+      "columns": [
+        {
+          "name": "customer_id",
+          "type": "STRING",
+          "mode": "REQUIRED"
+        },
+        {
+          "name": "email",
+          "type": "STRING",
+          "mode": "REQUIRED"
+        },
+        {
+          "name": "region",
+          "type": "STRING",
+          "mode": "REQUIRED"
+        },
+        {
+          "name": "country_code",
+          "type": "STRING",
+          "mode": "REQUIRED"
+        },
+        {
+          "name": "customer_segment",
+          "type": "STRING",
+          "mode": "REQUIRED"
+        },
+        {
+          "name": "signup_date",
+          "type": "DATE",
+          "mode": "REQUIRED"
+        },
+        {
+          "name": "created_at",
+          "type": "TIMESTAMP",
+          "mode": "REQUIRED"
+        }
+      ]
+    },
+    "products": {
+      "columns": [
+        {
+          "name": "product_id",
+          "type": "STRING",
+          "mode": "REQUIRED"
+        },
+        {
+          "name": "sku",
+          "type": "STRING",
+          "mode": "REQUIRED"
+        },
+        {
+          "name": "product_name",
+          "type": "STRING",
+          "mode": "REQUIRED"
+        },
+        {
+          "name": "category",
+          "type": "STRING",
+          "mode": "REQUIRED"
+        },
+        {
+          "name": "list_price",
+          "type": "NUMERIC",
+          "mode": "REQUIRED"
+        },
+        {
+          "name": "unit_cost",
+          "type": "NUMERIC",
+          "mode": "REQUIRED"
+        },
+        {
+          "name": "is_active",
+          "type": "BOOL",
+          "mode": "REQUIRED"
+        },
+        {
+          "name": "created_at",
+          "type": "TIMESTAMP",
+          "mode": "REQUIRED"
+        }
+      ]
+    },
+    "orders": {
+      "columns": [
+        {
+          "name": "order_id",
+          "type": "STRING",
+          "mode": "REQUIRED"
+        },
+        {
+          "name": "customer_id",
+          "type": "STRING",
+          "mode": "REQUIRED"
+        },
+        {
+          "name": "order_timestamp",
+          "type": "TIMESTAMP",
+          "mode": "REQUIRED"
+        },
+        {
+          "name": "order_date",
+          "type": "DATE",
+          "mode": "REQUIRED"
+        },
+        {
+          "name": "order_status",
+          "type": "STRING",
+          "mode": "REQUIRED"
+        },
+        {
+          "name": "sales_channel",
+          "type": "STRING",
+          "mode": "REQUIRED"
+        },
+        {
+          "name": "currency_code",
+          "type": "STRING",
+          "mode": "REQUIRED"
+        },
+        {
+          "name": "items_subtotal",
+          "type": "NUMERIC",
+          "mode": "REQUIRED"
+        },
+        {
+          "name": "discount_amount",
+          "type": "NUMERIC",
+          "mode": "REQUIRED"
+        },
+        {
+          "name": "shipping_amount",
+          "type": "NUMERIC",
+          "mode": "REQUIRED"
+        },
+        {
+          "name": "tax_amount",
+          "type": "NUMERIC",
+          "mode": "REQUIRED"
+        },
+        {
+          "name": "order_total",
+          "type": "NUMERIC",
+          "mode": "REQUIRED"
+        },
+        {
+          "name": "cancelled_timestamp",
+          "type": "TIMESTAMP",
+          "mode": "NULLABLE"
+        }
+      ]
+    },
+    "order_items": {
+      "columns": [
+        {
+          "name": "order_item_id",
+          "type": "STRING",
+          "mode": "REQUIRED"
+        },
+        {
+          "name": "order_id",
+          "type": "STRING",
+          "mode": "REQUIRED"
+        },
+        {
+          "name": "line_number",
+          "type": "INT64",
+          "mode": "REQUIRED"
+        },
+        {
+          "name": "product_id",
+          "type": "STRING",
+          "mode": "REQUIRED"
+        },
+        {
+          "name": "quantity",
+          "type": "INT64",
+          "mode": "REQUIRED"
+        },
+        {
+          "name": "unit_price",
+          "type": "NUMERIC",
+          "mode": "REQUIRED"
+        },
+        {
+          "name": "gross_amount",
+          "type": "NUMERIC",
+          "mode": "REQUIRED"
+        },
+        {
+          "name": "discount_amount",
+          "type": "NUMERIC",
+          "mode": "REQUIRED"
+        },
+        {
+          "name": "net_amount",
+          "type": "NUMERIC",
+          "mode": "REQUIRED"
+        }
+      ]
+    },
+    "payments": {
+      "columns": [
+        {
+          "name": "payment_id",
+          "type": "STRING",
+          "mode": "REQUIRED"
+        },
+        {
+          "name": "order_id",
+          "type": "STRING",
+          "mode": "REQUIRED"
+        },
+        {
+          "name": "provider_transaction_id",
+          "type": "STRING",
+          "mode": "REQUIRED"
+        },
+        {
+          "name": "payment_timestamp",
+          "type": "TIMESTAMP",
+          "mode": "REQUIRED"
+        },
+        {
+          "name": "payment_method",
+          "type": "STRING",
+          "mode": "REQUIRED"
+        },
+        {
+          "name": "payment_status",
+          "type": "STRING",
+          "mode": "REQUIRED"
+        },
+        {
+          "name": "amount",
+          "type": "NUMERIC",
+          "mode": "REQUIRED"
+        },
+        {
+          "name": "failure_reason",
+          "type": "STRING",
+          "mode": "NULLABLE"
+        }
+      ]
+    },
+    "shipments": {
+      "columns": [
+        {
+          "name": "shipment_id",
+          "type": "STRING",
+          "mode": "REQUIRED"
+        },
+        {
+          "name": "order_id",
+          "type": "STRING",
+          "mode": "REQUIRED"
+        },
+        {
+          "name": "carrier",
+          "type": "STRING",
+          "mode": "REQUIRED"
+        },
+        {
+          "name": "shipment_status",
+          "type": "STRING",
+          "mode": "REQUIRED"
+        },
+        {
+          "name": "shipped_timestamp",
+          "type": "TIMESTAMP",
+          "mode": "REQUIRED"
+        },
+        {
+          "name": "promised_delivery_date",
+          "type": "DATE",
+          "mode": "REQUIRED"
+        },
+        {
+          "name": "delivered_timestamp",
+          "type": "TIMESTAMP",
+          "mode": "NULLABLE"
+        }
+      ]
+    },
+    "refunds": {
+      "columns": [
+        {
+          "name": "refund_id",
+          "type": "STRING",
+          "mode": "REQUIRED"
+        },
+        {
+          "name": "order_id",
+          "type": "STRING",
+          "mode": "REQUIRED"
+        },
+        {
+          "name": "order_item_id",
+          "type": "STRING",
+          "mode": "NULLABLE"
+        },
+        {
+          "name": "payment_id",
+          "type": "STRING",
+          "mode": "REQUIRED"
+        },
+        {
+          "name": "refund_timestamp",
+          "type": "TIMESTAMP",
+          "mode": "REQUIRED"
+        },
+        {
+          "name": "refund_amount",
+          "type": "NUMERIC",
+          "mode": "REQUIRED"
+        },
+        {
+          "name": "refund_reason",
+          "type": "STRING",
+          "mode": "REQUIRED"
+        },
+        {
+          "name": "refund_status",
+          "type": "STRING",
+          "mode": "REQUIRED"
+        }
+      ]
+    }
+  },
+  "files": [
+    {
+      "variant": "clean",
+      "table": "customers",
+      "format": "csv",
+      "path": "data/generated/clean/csv/customers.csv",
+      "rows": 2000,
+      "bytes": 187776,
+      "sha256": "9ff768d9fc6bcc9a30bf274b336b62ea16d5d9bd303054325f5884d39d8fa270"
+    },
+    {
+      "variant": "clean",
+      "table": "customers",
+      "format": "parquet",
+      "path": "data/generated/clean/parquet/customers.parquet",
+      "rows": 2000,
+      "bytes": 54180,
+      "sha256": "106bac862f7c10f0865847f69d8f262a44f3da95548f624fe8a6f15855a0b02b"
+    },
+    {
+      "variant": "clean",
+      "table": "products",
+      "format": "csv",
+      "path": "data/generated/clean/csv/products.csv",
+      "rows": 250,
+      "bytes": 22744,
+      "sha256": "e68dce0e01afb6e7b5f22c564e40cc66420953a172a7b3d015002b232d54cd3a"
+    },
+    {
+      "variant": "clean",
+      "table": "products",
+      "format": "parquet",
+      "path": "data/generated/clean/parquet/products.parquet",
+      "rows": 250,
+      "bytes": 12171,
+      "sha256": "9e7f912c15b3a0ce857e9be442e7157fb73f46278ee7aeaa824b767d30241058"
+    },
+    {
+      "variant": "clean",
+      "table": "orders",
+      "format": "csv",
+      "path": "data/generated/clean/csv/orders.csv",
+      "rows": 15000,
+      "bytes": 1627413,
+      "sha256": "a030616cf4c0889e63054ec901a86c693555f8e261ecef782e7a9cc0e93b89be"
+    },
+    {
+      "variant": "clean",
+      "table": "orders",
+      "format": "parquet",
+      "path": "data/generated/clean/parquet/orders.parquet",
+      "rows": 15000,
+      "bytes": 512358,
+      "sha256": "38a5f3e326213e92d811522453f05220f9be8234be88f393c77e4bcd0829d343"
+    },
+    {
+      "variant": "clean",
+      "table": "order_items",
+      "format": "csv",
+      "path": "data/generated/clean/csv/order_items.csv",
+      "rows": 32823,
+      "bytes": 1969288,
+      "sha256": "10b98665331c7e73659be36bc1d749f2dfb7164f5689601d646a54b628e49525"
+    },
+    {
+      "variant": "clean",
+      "table": "order_items",
+      "format": "parquet",
+      "path": "data/generated/clean/parquet/order_items.parquet",
+      "rows": 32823,
+      "bytes": 583104,
+      "sha256": "5d1649dac87d59884b988bb2acacb97fd9f0d5b58f4b797f3bf30b7322b63e32"
+    },
+    {
+      "variant": "clean",
+      "table": "payments",
+      "format": "csv",
+      "path": "data/generated/clean/csv/payments.csv",
+      "rows": 15804,
+      "bytes": 1506197,
+      "sha256": "601653eae717076e849acbe28a01de56a7c56402aa576333d25182f761cffb7b"
+    },
+    {
+      "variant": "clean",
+      "table": "payments",
+      "format": "parquet",
+      "path": "data/generated/clean/parquet/payments.parquet",
+      "rows": 15804,
+      "bytes": 750301,
+      "sha256": "7561395fc0e4eedb603ef52fd261310e892dc2c08895c80c7368912c822b5482"
+    },
+    {
+      "variant": "clean",
+      "table": "shipments",
+      "format": "csv",
+      "path": "data/generated/clean/csv/shipments.csv",
+      "rows": 14291,
+      "bytes": 1450742,
+      "sha256": "4ba0505af1eecb1d27b9477419dae636e3bf058cce66553c43f6404a7d011d37"
+    },
+    {
+      "variant": "clean",
+      "table": "shipments",
+      "format": "parquet",
+      "path": "data/generated/clean/parquet/shipments.parquet",
+      "rows": 14291,
+      "bytes": 445695,
+      "sha256": "73c1f758dddbba973edd3499be7037d87e100b56cb1958abba735a241524bf8b"
+    },
+    {
+      "variant": "clean",
+      "table": "refunds",
+      "format": "csv",
+      "path": "data/generated/clean/csv/refunds.csv",
+      "rows": 2047,
+      "bytes": 196329,
+      "sha256": "26262fec3bd1d8d8f7e0be6a23338c0a8f021a1dadf6d85d8c3ebaf97d01bbe4"
+    },
+    {
+      "variant": "clean",
+      "table": "refunds",
+      "format": "parquet",
+      "path": "data/generated/clean/parquet/refunds.parquet",
+      "rows": 2047,
+      "bytes": 83817,
+      "sha256": "e6e8203be8b2d02b3b9f6c57a49ace46548450d6afc118b1038f5f2f57b7ad19"
+    },
+    {
+      "variant": "corrupted",
+      "table": "customers",
+      "format": "csv",
+      "path": "data/generated/corrupted/csv/customers.csv",
+      "rows": 2005,
+      "bytes": 188176,
+      "sha256": "f5867abe730631194080ea555a8726a151bd14ab11846e1a76b6a24225237481"
+    },
+    {
+      "variant": "corrupted",
+      "table": "customers",
+      "format": "parquet",
+      "path": "data/generated/corrupted/parquet/customers.parquet",
+      "rows": 2005,
+      "bytes": 54307,
+      "sha256": "e3348846d3924cb47978b51323a2005cc3a11d92afa68f9131a9908f0b1c0da5"
+    },
+    {
+      "variant": "corrupted",
+      "table": "products",
+      "format": "csv",
+      "path": "data/generated/corrupted/csv/products.csv",
+      "rows": 250,
+      "bytes": 22749,
+      "sha256": "4dd5569d46d5c352e01a2b7620c042d764ed72242723799f0253626601d45ddf"
+    },
+    {
+      "variant": "corrupted",
+      "table": "products",
+      "format": "parquet",
+      "path": "data/generated/corrupted/parquet/products.parquet",
+      "rows": 250,
+      "bytes": 12233,
+      "sha256": "2aba52d8565288c0dde1c5388ec2d0c1738c289afc17bb583a1e1acfd98bfd6a"
+    },
+    {
+      "variant": "corrupted",
+      "table": "orders",
+      "format": "csv",
+      "path": "data/generated/corrupted/csv/orders.csv",
+      "rows": 15000,
+      "bytes": 1627401,
+      "sha256": "9e68f7d899d507444b5f5abc25b39ca9621d00e9399c0b439d285b21a34ff603"
+    },
+    {
+      "variant": "corrupted",
+      "table": "orders",
+      "format": "parquet",
+      "path": "data/generated/corrupted/parquet/orders.parquet",
+      "rows": 15000,
+      "bytes": 512427,
+      "sha256": "5c5e3f15b99fa23f34b97c38d6e46103309200dc406660b42fcb929120b9dde7"
+    },
+    {
+      "variant": "corrupted",
+      "table": "order_items",
+      "format": "csv",
+      "path": "data/generated/corrupted/csv/order_items.csv",
+      "rows": 32840,
+      "bytes": 1970310,
+      "sha256": "c578e1b742f20199c7df53242b5f9599c7d23b4e0b498ba11fa02d1866c81a06"
+    },
+    {
+      "variant": "corrupted",
+      "table": "order_items",
+      "format": "parquet",
+      "path": "data/generated/corrupted/parquet/order_items.parquet",
+      "rows": 32840,
+      "bytes": 583351,
+      "sha256": "c68c9e0940f5b61b92ab7d07a3643ed45204258e20c58348a27b07e5c406d3cd"
+    },
+    {
+      "variant": "corrupted",
+      "table": "payments",
+      "format": "csv",
+      "path": "data/generated/corrupted/csv/payments.csv",
+      "rows": 15819,
+      "bytes": 1507592,
+      "sha256": "2c83df27e246ea52411ece2b02815d8d367147d93bada17491ecf7a2abbca358"
+    },
+    {
+      "variant": "corrupted",
+      "table": "payments",
+      "format": "parquet",
+      "path": "data/generated/corrupted/parquet/payments.parquet",
+      "rows": 15819,
+      "bytes": 750646,
+      "sha256": "1ff6bb61f9f8ea77083b05e619e7c95223318815ee6e16c88b12a0dcc3c4f426"
+    },
+    {
+      "variant": "corrupted",
+      "table": "shipments",
+      "format": "csv",
+      "path": "data/generated/corrupted/csv/shipments.csv",
+      "rows": 14291,
+      "bytes": 1450604,
+      "sha256": "e375c1f0ebffa67e56cef901591685e367f8c39fc669a0216de70ac89bee0141"
+    },
+    {
+      "variant": "corrupted",
+      "table": "shipments",
+      "format": "parquet",
+      "path": "data/generated/corrupted/parquet/shipments.parquet",
+      "rows": 14291,
+      "bytes": 445670,
+      "sha256": "84d52258e6b46c6bb4ef8269f80e23c94b13ee98af1199a36d9f8b994a8d16d4"
+    },
+    {
+      "variant": "corrupted",
+      "table": "refunds",
+      "format": "csv",
+      "path": "data/generated/corrupted/csv/refunds.csv",
+      "rows": 2047,
+      "bytes": 196333,
+      "sha256": "207fec4b15e942846dc6e2147130a4abb9c94ba5ae0ff94f8819c2fa1896078b"
+    },
+    {
+      "variant": "corrupted",
+      "table": "refunds",
+      "format": "parquet",
+      "path": "data/generated/corrupted/parquet/refunds.parquet",
+      "rows": 2047,
+      "bytes": 83846,
+      "sha256": "0c2096309dfd1fe876ee0d0240468b7c3e820e4a83ecb8e92acbf908ccd9fcb3"
+    }
+  ],
+  "notes": "Row counts for the corrupted variant include injected duplicate/orphan rows. Re-running with the same config and package versions reproduces identical CSV files (checked by sha256)."
+}
